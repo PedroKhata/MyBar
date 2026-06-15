@@ -65,7 +65,144 @@ public class ItensDaConta {
     @Column(name = "hora_entrega_bar")
     private LocalTime horaEntregaBar;
 
-    public ItensDaConta() {}
+    public ItensDaConta() {
+
+    }
 
     // Lembre-se de gerar os Getters e Setters de todos os campos aqui!
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
+    }
+
+    public ItemCardapio getItemCardapio() {
+        return itemCardapio;
+    }
+
+    public void setItemCardapio(ItemCardapio itemCardapio) {
+        this.itemCardapio = itemCardapio;
+    }
+
+    public Usuario getQuemLancou() {
+        return quemLancou;
+    }
+
+    public void setQuemLancou(Usuario quemLancou) {
+        this.quemLancou = quemLancou;
+    }
+
+    public Usuario getQuemRemoveu() {
+        return quemRemoveu;
+    }
+
+    public void setQuemRemoveu(Usuario quemRemoveu) {
+        this.quemRemoveu = quemRemoveu;
+    }
+
+    public LocalDate getDataSolicitacao() {
+        return dataSolicitacao;
+    }
+
+    public void setDataSolicitacao(LocalDate dataSolicitacao) {
+        this.dataSolicitacao = dataSolicitacao;
+    }
+
+    public LocalTime getHoraSolicitacao() {
+        return horaSolicitacao;
+    }
+
+    public void setHoraSolicitacao(LocalTime horaSolicitacao) {
+        this.horaSolicitacao = horaSolicitacao;
+    }
+
+    public LocalDate getDataRecebimentoCozinha() {
+        return dataRecebimentoCozinha;
+    }
+
+    public void setDataRecebimentoCozinha(LocalDate dataRecebimentoCozinha) {
+        this.dataRecebimentoCozinha = dataRecebimentoCozinha;
+    }
+
+    public LocalTime getHoraRecebimentoCozinha() {
+        return horaRecebimentoCozinha;
+    }
+
+    public void setHoraRecebimentoCozinha(LocalTime horaRecebimentoCozinha) {
+        this.horaRecebimentoCozinha = horaRecebimentoCozinha;
+    }
+
+    public LocalDate getDataEntregaCozinha() {
+        return dataEntregaCozinha;
+    }
+
+    public void setDataEntregaCozinha(LocalDate dataEntregaCozinha) {
+        this.dataEntregaCozinha = dataEntregaCozinha;
+    }
+
+    public LocalTime getHoraEntregaCozinha() {
+        return horaEntregaCozinha;
+    }
+
+    public void setHoraEntregaCozinha(LocalTime horaEntregaCozinha) {
+        this.horaEntregaCozinha = horaEntregaCozinha;
+    }
+
+    public LocalDate getDataRecebimentoBar() {
+        return dataRecebimentoBar;
+    }
+
+    public void setDataRecebimentoBar(LocalDate dataRecebimentoBar) {
+        this.dataRecebimentoBar = dataRecebimentoBar;
+    }
+
+    public LocalTime getHoraRecebimentoBar() {
+        return horaRecebimentoBar;
+    }
+
+    public void setHoraRecebimentoBar(LocalTime horaRecebimentoBar) {
+        this.horaRecebimentoBar = horaRecebimentoBar;
+    }
+
+    public LocalDate getDataEntregaBar() {
+        return dataEntregaBar;
+    }
+
+    public void setDataEntregaBar(LocalDate dataEntregaBar) {
+        this.dataEntregaBar = dataEntregaBar;
+    }
+
+    public LocalTime getHoraEntregaBar() {
+        return horaEntregaBar;
+    }
+
+    public void setHoraEntregaBar(LocalTime horaEntregaBar) {
+        this.horaEntregaBar = horaEntregaBar;
+    }
 }
