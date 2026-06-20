@@ -1,7 +1,14 @@
 package br.com.dupla.mybar.service;
 
+import br.com.dupla.mybar.dto.UsuarioRequestDTO;
+import br.com.dupla.mybar.dto.UsuarioResponseDTO;
+import br.com.dupla.mybar.entity.Usuario;
+import br.com.dupla.mybar.exception.RegraNegocioException;
 import br.com.dupla.mybar.repository.UsuarioRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
@@ -10,5 +17,40 @@ public class UsuarioService {
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
+    }
+
+    public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
+        Usuario usuario = new Usuario();
+        usuario.setNome(dto.nome());
+        usuario.setEmail(dto.email());
+        usuario.setSenha(dto.senha());
+        usuario.setTipo(dto.tipo());
+        usuario.setAtivo(true);
+
+        try {
+            usuario = usuarioRepository.save(usuario);
+            return new UsuarioResponseDTO(usuario);
+        } catch (DataIntegrityViolationException e) {
+            throw new RegraNegocioException("E-mail já cadastrado no sistema.");
+        }
+    }
+
+    public List<UsuarioResponseDTO> listarAtivos() {
+        return usuarioRepository.findAll().stream()
+                .filter(Usuario::getAtivo)
+                .map(UsuarioResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public void excluirOuDesativar(Integer codigo) {
+        Usuario usuario = usuarioRepository.findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado."));
+
+        try {
+            usuarioRepository.delete(usuario);
+        } catch (DataIntegrityViolationException e) {
+            usuario.setAtivo(false);
+            usuarioRepository.save(usuario);
+        }
     }
 }

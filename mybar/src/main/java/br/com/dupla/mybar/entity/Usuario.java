@@ -24,7 +24,9 @@ public class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipo;
 
-    // Construtor vazio exigido pelo JPA
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
     public Usuario() {
     }
 
@@ -43,4 +45,7 @@ public class Usuario {
 
     public TipoUsuario getTipo() { return tipo; }
     public void setTipo(TipoUsuario tipo) { this.tipo = tipo; }
+
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 }
