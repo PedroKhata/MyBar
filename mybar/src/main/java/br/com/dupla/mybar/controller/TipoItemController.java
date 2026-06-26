@@ -1,6 +1,7 @@
 package br.com.dupla.mybar.controller;
 
-import br.com.dupla.mybar.entity.TipoItem;
+import br.com.dupla.mybar.dto.tipoitem.TipoItemRequest;
+import br.com.dupla.mybar.dto.tipoitem.TipoItemResponse;
 import br.com.dupla.mybar.service.TipoItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,24 +19,23 @@ public class TipoItemController {
     }
 
     @GetMapping
-    public List<TipoItem> listarTodos() {
+    public List<TipoItemResponse> listarTodos() {
         return tipoItemService.listarTodos();
     }
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<TipoItem> buscarPorCodigo(@PathVariable Integer codigo) {
+    public ResponseEntity<TipoItemResponse> buscarPorCodigo(@PathVariable Integer codigo) {
         return ResponseEntity.ok(tipoItemService.buscarPorCodigo(codigo));
     }
 
     @PostMapping
-    public ResponseEntity<TipoItem> criar(@RequestBody TipoItem tipoItem) {
-        return ResponseEntity.ok(tipoItemService.salvar(tipoItem));
+    public ResponseEntity<TipoItemResponse> criar(@RequestBody TipoItemRequest request) {
+        return ResponseEntity.ok(tipoItemService.salvar(request));
     }
 
     @PutMapping("/{codigo}")
-    public ResponseEntity<TipoItem> atualizar(@PathVariable Integer codigo, @RequestBody TipoItem tipoItem) {
-        tipoItem.setCodigo(codigo);
-        return ResponseEntity.ok(tipoItemService.salvar(tipoItem));
+    public ResponseEntity<TipoItemResponse> atualizar(@PathVariable Integer codigo, @RequestBody TipoItemRequest request) {
+        return ResponseEntity.ok(tipoItemService.atualizar(codigo, request));
     }
 
     @DeleteMapping("/{codigo}")

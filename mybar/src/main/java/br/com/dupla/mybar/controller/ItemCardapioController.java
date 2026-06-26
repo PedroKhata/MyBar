@@ -1,12 +1,12 @@
 package br.com.dupla.mybar.controller;
 
-import br.com.dupla.mybar.entity.ItemCardapio;
+import br.com.dupla.mybar.dto.itemcardapio.ItemCardapioRequest;
+import br.com.dupla.mybar.dto.itemcardapio.ItemCardapioResponse;
 import br.com.dupla.mybar.service.ItemCardapioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/itens-cardapio")
@@ -19,31 +19,23 @@ public class ItemCardapioController {
     }
 
     @GetMapping
-    public List<ItemCardapio> listarTodos() {
+    public List<ItemCardapioResponse> listarTodos() {
         return itemCardapioService.listarTodos();
     }
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<ItemCardapio> buscarPorCodigo(@PathVariable Integer codigo) {
+    public ResponseEntity<ItemCardapioResponse> buscarPorCodigo(@PathVariable Integer codigo) {
         return ResponseEntity.ok(itemCardapioService.buscarPorCodigo(codigo));
     }
 
     @PostMapping
-    public ResponseEntity<ItemCardapio> criar(@RequestBody Map<String, Object> body) {
-        ItemCardapio item = new ItemCardapio();
-        item.setDescricao((String) body.get("descricao"));
-        item.setValor(new java.math.BigDecimal(body.get("valor").toString()));
-        Integer tipoItemCodigo = (Integer) body.get("tipoItemCodigo");
-        return ResponseEntity.ok(itemCardapioService.salvar(tipoItemCodigo, item));
+    public ResponseEntity<ItemCardapioResponse> criar(@RequestBody ItemCardapioRequest request) {
+        return ResponseEntity.ok(itemCardapioService.salvar(request));
     }
 
     @PutMapping("/{codigo}")
-    public ResponseEntity<ItemCardapio> atualizar(@PathVariable Integer codigo, @RequestBody Map<String, Object> body) {
-        ItemCardapio item = itemCardapioService.buscarPorCodigo(codigo);
-        item.setDescricao((String) body.get("descricao"));
-        item.setValor(new java.math.BigDecimal(body.get("valor").toString()));
-        Integer tipoItemCodigo = (Integer) body.get("tipoItemCodigo");
-        return ResponseEntity.ok(itemCardapioService.salvar(tipoItemCodigo, item));
+    public ResponseEntity<ItemCardapioResponse> atualizar(@PathVariable Integer codigo, @RequestBody ItemCardapioRequest request) {
+        return ResponseEntity.ok(itemCardapioService.atualizar(codigo, request));
     }
 
     @DeleteMapping("/{codigo}")

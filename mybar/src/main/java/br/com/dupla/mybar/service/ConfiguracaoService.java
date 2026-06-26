@@ -1,5 +1,7 @@
 package br.com.dupla.mybar.service;
 
+import br.com.dupla.mybar.dto.configuracao.ConfiguracaoRequest;
+import br.com.dupla.mybar.dto.configuracao.ConfiguracaoResponse;
 import br.com.dupla.mybar.entity.Configuracao;
 import br.com.dupla.mybar.repository.ConfiguracaoRepository;
 import org.springframework.stereotype.Service;
@@ -18,17 +20,25 @@ public class ConfiguracaoService {
         this.configuracaoRepository = configuracaoRepository;
     }
 
-    public Configuracao salvar(Configuracao configuracao) {
+    public ConfiguracaoResponse salvar(ConfiguracaoRequest request) {
+        Configuracao configuracao = new Configuracao();
+        configuracao.setValorIngressoMasc(request.valorIngressoMasc());
+        configuracao.setValorIngressoFemin(request.valorIngressoFemin());
+        configuracao.setModoOperacao(request.modoOperacao());
         configuracao.setData(LocalDate.now());
         configuracao.setHora(LocalTime.now());
-        return configuracaoRepository.save(configuracao);
+        return ConfiguracaoResponse.fromEntity(configuracaoRepository.save(configuracao));
     }
 
-    public Optional<Configuracao> buscarHoje() {
-        return configuracaoRepository.findTopByDataOrderByHoraDesc(LocalDate.now());
+    public Optional<ConfiguracaoResponse> buscarHoje() {
+        return configuracaoRepository.findTopByDataOrderByHoraDesc(LocalDate.now())
+                .map(ConfiguracaoResponse::fromEntity);
     }
 
-    public List<Configuracao> listarTodas() {
-        return configuracaoRepository.findAll();
+    public List<ConfiguracaoResponse> listarTodas() {
+        return configuracaoRepository.findAll()
+                .stream()
+                .map(ConfiguracaoResponse::fromEntity)
+                .toList();
     }
 }

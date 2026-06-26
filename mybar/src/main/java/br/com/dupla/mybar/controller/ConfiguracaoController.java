@@ -1,6 +1,7 @@
 package br.com.dupla.mybar.controller;
 
-import br.com.dupla.mybar.entity.Configuracao;
+import br.com.dupla.mybar.dto.configuracao.ConfiguracaoRequest;
+import br.com.dupla.mybar.dto.configuracao.ConfiguracaoResponse;
 import br.com.dupla.mybar.service.ConfiguracaoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,19 +19,19 @@ public class ConfiguracaoController {
     }
 
     @PostMapping
-    public ResponseEntity<Configuracao> salvar(@RequestBody Configuracao configuracao) {
-        return ResponseEntity.ok(configuracaoService.salvar(configuracao));
+    public ResponseEntity<ConfiguracaoResponse> salvar(@RequestBody ConfiguracaoRequest request) {
+        return ResponseEntity.ok(configuracaoService.salvar(request));
     }
 
     @GetMapping("/hoje")
-    public ResponseEntity<Configuracao> buscarHoje() {
+    public ResponseEntity<ConfiguracaoResponse> buscarHoje() {
         return configuracaoService.buscarHoje()
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<Configuracao> listarTodas() {
+    public List<ConfiguracaoResponse> listarTodas() {
         return configuracaoService.listarTodas();
     }
 }
