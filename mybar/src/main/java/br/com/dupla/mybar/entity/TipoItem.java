@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 public class TipoItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codigo;
 
     @Column(nullable = false)
