@@ -1,11 +1,12 @@
 package br.com.dupla.mybar.service;
 
-import br.com.dupla.mybar.dto.itensconta.ItensDaContaRequest;
-import br.com.dupla.mybar.dto.itensconta.ItensDaContaResponse;
+import br.com.dupla.mybar.dto.itens.ItensDaContaRequest;
+import br.com.dupla.mybar.dto.itens.ItensDaContaResponse;
 import br.com.dupla.mybar.entity.Conta;
 import br.com.dupla.mybar.entity.ItemCardapio;
 import br.com.dupla.mybar.entity.ItensDaConta;
 import br.com.dupla.mybar.entity.Usuario;
+import br.com.dupla.mybar.exception.RegraNegocioException;
 import br.com.dupla.mybar.repository.ContaRepository;
 import br.com.dupla.mybar.repository.ItemCardapioRepository;
 import br.com.dupla.mybar.repository.ItensDaContaRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItensDaContaService {
@@ -37,11 +39,13 @@ public class ItensDaContaService {
 
     public ItensDaContaResponse lancar(ItensDaContaRequest request) {
         Conta conta = contaRepository.findById(request.contaId())
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada: " + request.contaId()));
+                .orElseThrow(() -> new RegraNegocioException("Conta não encontrada."));
+
         ItemCardapio item = itemCardapioRepository.findById(request.itemCardapioCodigo())
-                .orElseThrow(() -> new RuntimeException("Item não encontrado: " + request.itemCardapioCodigo()));
+                .orElseThrow(() -> new RegraNegocioException("Item de cardápio não encontrado."));
+
         Usuario usuario = usuarioRepository.findById(request.quemLancouCodigo())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + request.quemLancouCodigo()));
+                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado."));
 
         ItensDaConta itemDaConta = new ItensDaConta();
         itemDaConta.setConta(conta);
@@ -52,14 +56,13 @@ public class ItensDaContaService {
         itemDaConta.setDataSolicitacao(LocalDate.now());
         itemDaConta.setHoraSolicitacao(LocalTime.now());
 
-        return ItensDaContaResponse.fromEntity(itensDaContaRepository.save(itemDaConta));
+        return new ItensDaContaResponse(itensDaContaRepository.save(itemDaConta));
     }
 
     public List<ItensDaContaResponse> listarPorConta(Long contaId) {
-        return itensDaContaRepository.findAll()
+        return itensDaContaRepository.findByContaIdAndAtivoTrue(contaId)
                 .stream()
-                .filter(i -> i.getConta().getId().equals(contaId) && i.getAtivo())
-                .map(ItensDaContaResponse::fromEntity)
-                .toList();
+                .map(ItensDaContaResponse::new)
+                .collect(Collectors.toList());
     }
 }

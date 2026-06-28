@@ -1,7 +1,7 @@
 package br.com.dupla.mybar.service;
 
-import br.com.dupla.mybar.dto.UsuarioRequestDTO;
-import br.com.dupla.mybar.dto.UsuarioResponseDTO;
+import br.com.dupla.mybar.dto.usuario.UsuarioRequest;
+import br.com.dupla.mybar.dto.usuario.UsuarioResponse;
 import br.com.dupla.mybar.entity.Usuario;
 import br.com.dupla.mybar.exception.RegraNegocioException;
 import br.com.dupla.mybar.repository.UsuarioRepository;
@@ -19,7 +19,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
+    public UsuarioResponse salvar(UsuarioRequest dto) {
         Usuario usuario = new Usuario();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
@@ -29,16 +29,16 @@ public class UsuarioService {
 
         try {
             usuario = usuarioRepository.save(usuario);
-            return new UsuarioResponseDTO(usuario);
+            return new UsuarioResponse(usuario);
         } catch (DataIntegrityViolationException e) {
             throw new RegraNegocioException("E-mail já cadastrado no sistema.");
         }
     }
 
-    public List<UsuarioResponseDTO> listarAtivos() {
+    public List<UsuarioResponse> listarAtivos() {
         return usuarioRepository.findAll().stream()
                 .filter(Usuario::getAtivo)
-                .map(UsuarioResponseDTO::new)
+                .map(UsuarioResponse::new)
                 .collect(Collectors.toList());
     }
 

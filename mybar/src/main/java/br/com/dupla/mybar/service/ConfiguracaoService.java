@@ -27,18 +27,22 @@ public class ConfiguracaoService {
         configuracao.setModoOperacao(request.modoOperacao());
         configuracao.setData(LocalDate.now());
         configuracao.setHora(LocalTime.now());
-        return ConfiguracaoResponse.fromEntity(configuracaoRepository.save(configuracao));
+
+        // Ajuste: Utilizando o construtor do Response padronizado
+        return new ConfiguracaoResponse(configuracaoRepository.save(configuracao));
     }
 
     public Optional<ConfiguracaoResponse> buscarHoje() {
+        // Ajuste: Mapeando com o construtor
         return configuracaoRepository.findTopByDataOrderByHoraDesc(LocalDate.now())
-                .map(ConfiguracaoResponse::fromEntity);
+                .map(ConfiguracaoResponse::new);
     }
 
     public List<ConfiguracaoResponse> listarTodas() {
+        // Ajuste: Mapeando a lista com o construtor
         return configuracaoRepository.findAll()
                 .stream()
-                .map(ConfiguracaoResponse::fromEntity)
+                .map(ConfiguracaoResponse::new)
                 .toList();
     }
 }

@@ -6,21 +6,14 @@ import java.time.LocalTime;
 import br.com.dupla.mybar.entity.Configuracao;
 
 public record ConfiguracaoResponse(
-    Integer id,
-    BigDecimal valorIngressoMasc,
-    BigDecimal valorIngressoFemin,
-    String modoOperacao,
-    LocalDate data,
-    LocalTime hora
+        Integer id,
+        BigDecimal valorIngressoMasc,
+        BigDecimal valorIngressoFemin,
+        String modoOperacao,
+        LocalDate data,
+        LocalTime hora
 ) {
-    public static ConfiguracaoResponse fromEntity(Configuracao c) {
-        return new ConfiguracaoResponse(
-            c.getId(),
-            c.getValorIngressoMasc(),
-            c.getValorIngressoFemin(),
-            c.getModoOperacao(),
-            c.getData(),
-            c.getHora()
-        );
+    public ConfiguracaoResponse(Configuracao c) {
+        this(c.getId(), c.getValorIngressoMasc(), c.getValorIngressoFemin(), c.getModoOperacao(), c.getData(), c.getHora());
     }
 }
