@@ -3,6 +3,7 @@ package br.com.dupla.mybar.controller;
 import br.com.dupla.mybar.dto.configuracao.ConfiguracaoRequest;
 import br.com.dupla.mybar.dto.configuracao.ConfiguracaoResponse;
 import br.com.dupla.mybar.service.ConfiguracaoService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class ConfiguracaoController {
     }
 
     @PostMapping
-    public ResponseEntity<ConfiguracaoResponse> salvar(@RequestBody ConfiguracaoRequest request) {
+    public ResponseEntity<ConfiguracaoResponse> salvar(@Valid @RequestBody ConfiguracaoRequest request) {
         return ResponseEntity.ok(configuracaoService.salvar(request));
     }
 

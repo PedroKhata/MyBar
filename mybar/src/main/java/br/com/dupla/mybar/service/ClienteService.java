@@ -1,6 +1,6 @@
 package br.com.dupla.mybar.service;
-import br.com.dupla.mybar.dto.ClienteRequestDTO;
-import br.com.dupla.mybar.dto.ClienteResponseDTO;
+import br.com.dupla.mybar.dto.cliente.ClienteRequest;
+import br.com.dupla.mybar.dto.cliente.ClienteResponse;
 import br.com.dupla.mybar.entity.Cliente;
 import br.com.dupla.mybar.exception.RegraNegocioException;
 import br.com.dupla.mybar.repository.ClienteRepository;
@@ -19,7 +19,7 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
-    public ClienteResponseDTO salvar(ClienteRequestDTO dto) {
+    public ClienteResponse salvar(ClienteRequest dto) {
         Cliente cliente = new Cliente();
         cliente.setNome(dto.nome());
 
@@ -30,15 +30,15 @@ public class ClienteService {
 
         try {
             cliente = clienteRepository.save(cliente);
-            return new ClienteResponseDTO(cliente);
+            return new ClienteResponse(cliente);
         } catch (DataIntegrityViolationException e) {
             throw new RegraNegocioException("Este CPF já está cadastrado no sistema.");
         }
     }
 
-    public List<ClienteResponseDTO> listarTodos() {
+    public List<ClienteResponse> listarTodos() {
         return clienteRepository.findAll().stream()
-                .map(ClienteResponseDTO::new)
+                .map(ClienteResponse::new)
                 .collect(Collectors.toList());
     }
 

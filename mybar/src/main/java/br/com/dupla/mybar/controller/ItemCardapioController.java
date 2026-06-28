@@ -1,8 +1,10 @@
 package br.com.dupla.mybar.controller;
 
-import br.com.dupla.mybar.dto.itemcardapio.ItemCardapioRequest;
-import br.com.dupla.mybar.dto.itemcardapio.ItemCardapioResponse;
+import br.com.dupla.mybar.dto.itens.ItemCardapioRequest;
+import br.com.dupla.mybar.dto.itens.ItemCardapioResponse;
 import br.com.dupla.mybar.service.ItemCardapioService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +21,8 @@ public class ItemCardapioController {
     }
 
     @GetMapping
-    public List<ItemCardapioResponse> listarTodos() {
-        return itemCardapioService.listarTodos();
+    public ResponseEntity<List<ItemCardapioResponse>> listarTodos() {
+        return ResponseEntity.ok(itemCardapioService.listarTodos());
     }
 
     @GetMapping("/{codigo}")
@@ -29,12 +31,12 @@ public class ItemCardapioController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemCardapioResponse> criar(@RequestBody ItemCardapioRequest request) {
-        return ResponseEntity.ok(itemCardapioService.salvar(request));
+    public ResponseEntity<ItemCardapioResponse> criar(@Valid @RequestBody ItemCardapioRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(itemCardapioService.salvar(request));
     }
 
     @PutMapping("/{codigo}")
-    public ResponseEntity<ItemCardapioResponse> atualizar(@PathVariable Integer codigo, @RequestBody ItemCardapioRequest request) {
+    public ResponseEntity<ItemCardapioResponse> atualizar(@PathVariable Integer codigo, @Valid @RequestBody ItemCardapioRequest request) {
         return ResponseEntity.ok(itemCardapioService.atualizar(codigo, request));
     }
 

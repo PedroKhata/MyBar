@@ -1,7 +1,7 @@
 package br.com.dupla.mybar.controller;
 
-import br.com.dupla.mybar.dto.UsuarioRequestDTO;
-import br.com.dupla.mybar.dto.UsuarioResponseDTO;
+import br.com.dupla.mybar.dto.usuario.UsuarioRequest;
+import br.com.dupla.mybar.dto.usuario.UsuarioResponse;
 import br.com.dupla.mybar.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,12 +20,12 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> cadastrar(@Valid @RequestBody UsuarioRequestDTO dto) {
+    public ResponseEntity<UsuarioResponse> cadastrar(@Valid @RequestBody UsuarioRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioResponseDTO>> listar() {
+    public ResponseEntity<List<UsuarioResponse>> listar() {
         return ResponseEntity.ok(usuarioService.listarAtivos());
     }
 

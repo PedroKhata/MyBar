@@ -1,8 +1,9 @@
 package br.com.dupla.mybar.controller;
 
-import br.com.dupla.mybar.dto.itensconta.ItensDaContaRequest;
-import br.com.dupla.mybar.dto.itensconta.ItensDaContaResponse;
+import br.com.dupla.mybar.dto.itens.ItensDaContaRequest;
+import br.com.dupla.mybar.dto.itens.ItensDaContaResponse;
 import br.com.dupla.mybar.service.ItensDaContaService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class ItensDaContaController {
     }
 
     @PostMapping
-    public ResponseEntity<ItensDaContaResponse> lancar(@RequestBody ItensDaContaRequest request) {
+    public ResponseEntity<ItensDaContaResponse> lancar(@Valid @RequestBody ItensDaContaRequest request) {
         return ResponseEntity.ok(itensDaContaService.lancar(request));
     }
 
