@@ -34,7 +34,6 @@ public class ItensDaConta {
     @JoinColumn(name = "quem_removeu_codigo")
     private Usuario quemRemoveu;
 
-    // Datas e Horas (Omitidos os getters/setters abaixo para poupar espaço, mas você pode gerá-os na IDE)
     @Column(name = "data_solicitacao", nullable = false)
     private LocalDate dataSolicitacao;
 
@@ -69,7 +68,6 @@ public class ItensDaConta {
 
     }
 
-    // Lembre-se de gerar os Getters e Setters de todos os campos aqui!
     public Long getId() {
         return id;
     }
