@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBar — Entregas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html">My<span>Bar</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="contas.html">Contas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cardapio.html">Cardápio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="tipos.html">Tipos de Item</a></li>
+                    <li class="nav-item"><a class="nav-link" href="usuarios.html">Usuários</a></li>
+                    <li class="nav-item"><a class="nav-link" href="configuracao.html">Configuração</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cozinha.html">Cozinha</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="entregas.html">Entregas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="relatorio.html">Relatório</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1" style="font-weight: 700;">Controle de Entregas</h2>
+                <p style="color: var(--text-secondary); margin: 0;">Gerencie a saída de pedidos do balcão para os garçons</p>
+            </div>
+            <button class="btn-secondary-custom" onclick="atualizar()">
+                <i class="bi bi-arrow-clockwise me-2"></i>Atualizar
+            </button>
+        </div>
+
+        <div id="alertArea" class="mb-4" style="display:none;"></div>
+
+        <!-- CONTADORES -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="card text-center p-3">
+                    <p class="mb-1" style="color: var(--text-secondary); font-size: 0.875rem;">Prontos para Retirada</p>
+                    <h3 id="countProntos" style="color: #ffc107; font-weight: 700;">0</h3>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center p-3">
+                    <p class="mb-1" style="color: var(--text-secondary); font-size: 0.875rem;">Em Entrega</p>
+                    <h3 id="countEmEntrega" style="color: #4a9eff; font-weight: 700;">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRONTOS PARA RETIRADA -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-box-seam icon" style="color: #ffc107;"></i>Prontos para Retirada</span>
+                <span class="badge-status badge-solicitado" id="badgeProntos">0 pedidos</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Conta</th>
+                                <th>Item</th>
+                                <th>Qtd</th>
+                                <th>Pronto desde</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaProntos">
+                            <tr>
+                                <td colspan="5" class="text-center py-3" style="color: var(--text-secondary);">
+                                    Nenhum pedido pronto para retirada
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- EM ENTREGA -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-bicycle icon" style="color: #4a9eff;"></i>Em Entrega</span>
+                <span class="badge-status badge-recebido" id="badgeEmEntrega">0 pedidos</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Conta</th>
+                                <th>Item</th>
+                                <th>Qtd</th>
+                                <th>Retirado em</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaEmEntrega">
+                            <tr>
+                                <td colspan="5" class="text-center py-3" style="color: var(--text-secondary);">
+                                    Nenhum pedido em entrega
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL REGISTRAR ENTREGA -->
+    <div class="modal fade" id="modalEntrega" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar Entrega ao Garçom</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-secondary);">Item: <strong id="itemEntrega" style="color: var(--text-primary);"></strong></p>
+                    <div class="mb-3">
+                        <label class="form-label">Código do Garçom <span class="required">*</span></label>
+                        <input type="number" id="codigoGarcom" class="form-control" placeholder="Ex: 1010">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Código do Atendente <span class="required">*</span></label>
+                        <input type="number" id="codigoAtendente" class="form-control" placeholder="Ex: 2020">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Senha do Atendente <span class="required">*</span></label>
+                        <input type="password" id="senhaAtendente" class="form-control" placeholder="4 dígitos" maxlength="4">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-accent" onclick="confirmarEntrega()">
+                        <i class="bi bi-check-lg me-2"></i>Registrar Entrega
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script>
+        let modalEntrega;
+        let idParaEntregar = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            modalEntrega = new bootstrap.Modal(document.getElementById('modalEntrega'));
+            atualizar();
+            setInterval(atualizar, 30000);
+        });
+
+        async function atualizar() {
+            await Promise.all([carregarProntos(), carregarEmEntrega()]);
+        }
+
+        async function carregarProntos() {
+            try {
+                const pedidos = await EntregaAPI.listarProntos();
+                document.getElementById('countProntos').textContent = pedidos.length;
+                document.getElementById('badgeProntos').textContent = `${pedidos.length} pedido(s)`;
+                renderProntos(pedidos);
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar pedidos prontos: ' + err.message, 'error');
+            }
+        }
+
+        async function carregarEmEntrega() {
+            try {
+                const pedidos = await EntregaAPI.listarEmEntrega();
+                document.getElementById('countEmEntrega').textContent = pedidos.length;
+                document.getElementById('badgeEmEntrega').textContent = `${pedidos.length} pedido(s)`;
+                renderEmEntrega(pedidos);
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar pedidos em entrega: ' + err.message, 'error');
+            }
+        }
+
+        function renderProntos(pedidos) {
+            const tbody = document.getElementById('tabelaProntos');
+            if (!pedidos || pedidos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3" style="color: var(--text-secondary);">Nenhum pedido pronto para retirada</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = pedidos.map(p => `
+                <tr>
+                    <td><span style="color: var(--accent); font-weight: 600;">#${p.contaId}</span></td>
+                    <td><strong>${p.itemCardapioDescricao}</strong></td>
+                    <td>${p.quantidade}x</td>
+                    <td style="color: var(--text-secondary);">${formatarDataHora(p.dataEntregaCozinha, p.horaEntregaCozinha)}</td>
+                    <td>
+                        <button class="btn-success-custom" onclick="abrirModalEntrega(${p.id}, '${p.itemCardapioDescricao}')">
+                            <i class="bi bi-box-arrow-right me-1"></i>Retirar
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderEmEntrega(pedidos) {
+            const tbody = document.getElementById('tabelaEmEntrega');
+            if (!pedidos || pedidos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3" style="color: var(--text-secondary);">Nenhum pedido em entrega</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = pedidos.map(p => `
+                <tr>
+                    <td><span style="color: var(--accent); font-weight: 600;">#${p.contaId}</span></td>
+                    <td><strong>${p.itemCardapioDescricao}</strong></td>
+                    <td>${p.quantidade}x</td>
+                    <td style="color: var(--text-secondary);">${formatarDataHora(p.dataRecebimentoBar, p.horaRecebimentoBar)}</td>
+                    <td>
+                        <button class="btn-edit-custom" onclick="entregarAoGarcom(${p.id})">
+                            <i class="bi bi-person-check me-1"></i>Entregar
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function abrirModalEntrega(id, descricao) {
+            idParaEntregar = id;
+            document.getElementById('itemEntrega').textContent = descricao;
+            document.getElementById('codigoGarcom').value = '';
+            document.getElementById('codigoAtendente').value = '';
+            document.getElementById('senhaAtendente').value = '';
+            modalEntrega.show();
+        }
+
+        async function confirmarEntrega() {
+            const codigoGarcom = document.getElementById('codigoGarcom').value;
+            const codigoAtendente = document.getElementById('codigoAtendente').value;
+            const senhaAtendente = document.getElementById('senhaAtendente').value;
+
+            if (!codigoGarcom || !codigoAtendente || !senhaAtendente) {
+                mostrarAlerta('Preencha todos os campos.', 'error');
+                return;
+            }
+
+            try {
+                await EntregaAPI.receber(idParaEntregar);
+                mostrarAlerta('Pedido retirado pelo balcão!', 'success');
+                modalEntrega.hide();
+                atualizar();
+            } catch (err) {
+                mostrarAlerta('Erro: ' + err.message, 'error');
+            }
+        }
+
+        async function entregarAoGarcom(id) {
+            try {
+                await EntregaAPI.entregar(id);
+                mostrarAlerta('Pedido entregue ao garçom com sucesso!', 'success');
+                atualizar();
+            } catch (err) {
+                mostrarAlerta('Erro: ' + err.message, 'error');
+            }
+        }
+
+        function formatarDataHora(data, hora) {
+            if (!data) return '—';
+            const [ano, mes, dia] = data.split('-');
+            const horaStr = hora ? hora.slice(0, 5) : '';
+            return `${dia}/${mes}/${ano} ${horaStr}`;
+        }
+
+        function mostrarAlerta(msg, tipo) {
+            const area = document.getElementById('alertArea');
+            area.style.display = 'block';
+            area.innerHTML = `
+                <div class="alert-custom ${tipo === 'error' ? 'alert-error' : 'alert-success'}">
+                    <i class="bi bi-${tipo === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>${msg}
+                </div>`;
+            setTimeout(() => { area.style.display = 'none'; }, 4000);
+        }
+    </script>
+</body>
+</html>

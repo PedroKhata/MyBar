@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBar — Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html">My<span>Bar</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="contas.html">Contas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cardapio.html">Cardápio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="tipos.html">Tipos de Item</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="usuarios.html">Usuários</a></li>
+                    <li class="nav-item"><a class="nav-link" href="configuracao.html">Configuração</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cozinha.html">Cozinha</a></li>
+                    <li class="nav-item"><a class="nav-link" href="entregas.html">Entregas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="relatorio.html">Relatório</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1" style="font-weight: 700;">Usuários</h2>
+                <p style="color: var(--text-secondary); margin: 0;">Gerencie garçons, cozinha, atendentes e administradores</p>
+            </div>
+            <button class="btn-accent" onclick="abrirModalNovo()">
+                <i class="bi bi-plus-lg me-2"></i>Novo Usuário
+            </button>
+        </div>
+
+        <!-- FILTRO -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-search icon"></i>Pesquisar
+            </div>
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label">Nome</label>
+                        <input type="text" id="filtroNome" class="form-control" placeholder="Ex: João">
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn-accent w-100" onclick="pesquisar()">
+                            <i class="bi bi-search me-2"></i>Pesquisar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABELA -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-people icon"></i>Usuários Cadastrados
+            </div>
+            <div class="card-body p-0">
+                <div id="alertArea" class="p-3" style="display:none;"></div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Email</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaUsuarios">
+                            <tr>
+                                <td colspan="5" class="text-center py-4" style="color: var(--text-secondary);">
+                                    <i class="bi bi-inbox" style="font-size: 1.5rem;"></i>
+                                    <p class="mt-2 mb-0">Nenhum usuário encontrado</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INCLUSÃO/EDIÇÃO -->
+    <div class="modal fade" id="modalUsuario" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTituloUsuario">Novo Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="usuarioCodigo">
+                    <div class="mb-3">
+                        <label class="form-label">Código <span class="required">*</span></label>
+                        <input type="number" id="usuarioCodigoInput" class="form-control" placeholder="Ex: 1010 (4 dígitos)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nome <span class="required">*</span></label>
+                        <input type="text" id="usuarioNome" class="form-control" placeholder="Ex: João Limão" maxlength="255">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo <span class="required">*</span></label>
+                        <select id="usuarioTipo" class="form-select">
+                            <option value="">Selecione...</option>
+                            <option value="ADMINISTRADOR">Administrador</option>
+                            <option value="GARCOM">Garçom</option>
+                            <option value="COZINHA">Cozinha</option>
+                            <option value="ATENDENTE_BALCAO">Atendente Balcão</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email <span class="required">*</span></label>
+                        <input type="email" id="usuarioEmail" class="form-control" placeholder="Ex: joao@email.com">
+                    </div>
+                    <div class="mb-3" id="senhaGroup">
+                        <label class="form-label">Senha <span class="required">*</span></label>
+                        <input type="password" id="usuarioSenha" class="form-control" placeholder="4 dígitos" maxlength="4">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-accent" id="btnSalvarUsuario" onclick="salvar()">
+                        <i class="bi bi-check-lg me-2"></i>Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EXCLUSÃO -->
+    <div class="modal fade" id="modalExcluir" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-secondary);">Tem certeza que deseja excluir o usuário <strong id="nomeExcluir" style="color: var(--text-primary);"></strong>?</p>
+                    <p class="mb-0" style="color: var(--accent); font-size: 0.875rem;">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        Se houver registros vinculados, o usuário será desativado.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-danger-custom" style="padding: 0.5rem 1.25rem;" onclick="confirmarExclusao()">
+                        <i class="bi bi-trash me-2"></i>Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script>
+        let modalUsuario, modalExcluir;
+        let codigoParaExcluir = null;
+
+        const tipoLabels = {
+            'ADMINISTRADOR': 'Administrador',
+            'GARCOM': 'Garçom',
+            'COZINHA': 'Cozinha',
+            'ATENDENTE_BALCAO': 'Atendente Balcão'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            modalUsuario = new bootstrap.Modal(document.getElementById('modalUsuario'));
+            modalExcluir = new bootstrap.Modal(document.getElementById('modalExcluir'));
+            carregarTodos();
+        });
+
+        async function carregarTodos() {
+            try {
+                const usuarios = await UsuarioAPI.listar();
+                renderTabela(usuarios);
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar usuários: ' + err.message, 'error');
+            }
+        }
+
+        async function pesquisar() {
+            const filtro = document.getElementById('filtroNome').value.toLowerCase();
+            try {
+                const usuarios = await UsuarioAPI.listar();
+                const filtrados = usuarios.filter(u => u.nome.toLowerCase().includes(filtro));
+                renderTabela(filtrados);
+            } catch (err) {
+                mostrarAlerta('Erro ao pesquisar: ' + err.message, 'error');
+            }
+        }
+
+        function renderTabela(usuarios) {
+            const tbody = document.getElementById('tabelaUsuarios');
+            if (!usuarios || usuarios.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-4" style="color: var(--text-secondary);">
+                            <i class="bi bi-inbox" style="font-size: 1.5rem;"></i>
+                            <p class="mt-2 mb-0">Nenhum usuário encontrado</p>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            tbody.innerHTML = usuarios.map(u => `
+                <tr>
+                    <td><span style="color: var(--text-secondary); font-family: monospace;">${u.codigo}</span></td>
+                    <td><strong>${u.nome}</strong></td>
+                    <td>${tipoLabels[u.tipo] || u.tipo}</td>
+                    <td style="color: var(--text-secondary);">${u.email || '—'}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn-view-custom" onclick="visualizar(${u.codigo})">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn-edit-custom" onclick="editar(${u.codigo})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn-danger-custom" onclick="excluir(${u.codigo}, '${u.nome}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function abrirModalNovo() {
+            document.getElementById('modalTituloUsuario').textContent = 'Novo Usuário';
+            document.getElementById('usuarioCodigo').value = '';
+            document.getElementById('usuarioCodigoInput').value = '';
+            document.getElementById('usuarioNome').value = '';
+            document.getElementById('usuarioTipo').value = '';
+            document.getElementById('usuarioEmail').value = '';
+            document.getElementById('usuarioSenha').value = '';
+            document.getElementById('usuarioCodigoInput').disabled = false;
+            document.getElementById('senhaGroup').style.display = '';
+            setFieldsReadonly(false);
+            modalUsuario.show();
+        }
+
+        async function visualizar(codigo) {
+            try {
+                const u = await UsuarioAPI.buscar(codigo);
+                document.getElementById('modalTituloUsuario').textContent = 'Visualizar Usuário';
+                document.getElementById('usuarioCodigo').value = u.codigo;
+                document.getElementById('usuarioCodigoInput').value = u.codigo;
+                document.getElementById('usuarioNome').value = u.nome;
+                document.getElementById('usuarioTipo').value = u.tipo;
+                document.getElementById('usuarioEmail').value = u.email || '';
+                document.getElementById('usuarioSenha').value = '';
+                document.getElementById('senhaGroup').style.display = 'none';
+                setFieldsReadonly(true);
+                modalUsuario.show();
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar usuário: ' + err.message, 'error');
+            }
+        }
+
+        async function editar(codigo) {
+            try {
+                const u = await UsuarioAPI.buscar(codigo);
+                document.getElementById('modalTituloUsuario').textContent = 'Editar Usuário';
+                document.getElementById('usuarioCodigo').value = u.codigo;
+                document.getElementById('usuarioCodigoInput').value = u.codigo;
+                document.getElementById('usuarioCodigoInput').disabled = true;
+                document.getElementById('usuarioNome').value = u.nome;
+                document.getElementById('usuarioTipo').value = u.tipo;
+                document.getElementById('usuarioEmail').value = u.email || '';
+                document.getElementById('usuarioSenha').value = '';
+                document.getElementById('senhaGroup').style.display = '';
+                setFieldsReadonly(false);
+                modalUsuario.show();
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar usuário: ' + err.message, 'error');
+            }
+        }
+
+        function setFieldsReadonly(readonly) {
+            ['usuarioNome', 'usuarioTipo', 'usuarioEmail', 'usuarioSenha'].forEach(id => {
+                document.getElementById(id).disabled = readonly;
+            });
+            document.getElementById('btnSalvarUsuario').style.display = readonly ? 'none' : '';
+        }
+
+        async function salvar() {
+            const codigo = document.getElementById('usuarioCodigo').value;
+            const codigoInput = document.getElementById('usuarioCodigoInput').value;
+            const nome = document.getElementById('usuarioNome').value.trim();
+            const tipo = document.getElementById('usuarioTipo').value;
+            const email = document.getElementById('usuarioEmail').value.trim();
+            const senha = document.getElementById('usuarioSenha').value;
+
+            if (!codigoInput || !nome || !tipo || !email) {
+                mostrarAlerta('Preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+
+            const data = { codigo: parseInt(codigoInput), nome, tipo, email, senha };
+
+            try {
+                if (codigo) {
+                    await UsuarioAPI.atualizar(codigo, data);
+                    mostrarAlerta('Usuário atualizado com sucesso!', 'success');
+                } else {
+                    await UsuarioAPI.salvar(data);
+                    mostrarAlerta('Usuário cadastrado com sucesso!', 'success');
+                }
+                modalUsuario.hide();
+                carregarTodos();
+            } catch (err) {
+                mostrarAlerta('Erro ao salvar: ' + err.message, 'error');
+            }
+        }
+
+        function excluir(codigo, nome) {
+            codigoParaExcluir = codigo;
+            document.getElementById('nomeExcluir').textContent = nome;
+            modalExcluir.show();
+        }
+
+        async function confirmarExclusao() {
+            try {
+                await UsuarioAPI.deletar(codigoParaExcluir);
+                mostrarAlerta('Usuário excluído com sucesso!', 'success');
+                modalExcluir.hide();
+                carregarTodos();
+            } catch (err) {
+                modalExcluir.hide();
+                mostrarAlerta('Erro ao excluir: ' + err.message, 'error');
+            }
+        }
+
+        function mostrarAlerta(msg, tipo) {
+            const area = document.getElementById('alertArea');
+            area.style.display = 'block';
+            area.innerHTML = `
+                <div class="alert-custom ${tipo === 'error' ? 'alert-error' : 'alert-success'}">
+                    <i class="bi bi-${tipo === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>${msg}
+                </div>`;
+            setTimeout(() => { area.style.display = 'none'; }, 4000);
+        }
+    </script>
+</body>
+</html>
