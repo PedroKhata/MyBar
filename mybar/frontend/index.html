@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBar — Sistema de Gerenciamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">My<span>Bar</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/contas.html">Contas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/cardapio.html">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/tipos.html">Tipos de Item</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/usuarios.html">Usuários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/configuracao.html">Configuração</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/cozinha.html">Cozinha</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/entregas.html">Entregas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/relatorio.html">Relatório</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
+        <div class="hero-section">
+            <h1>MyBar</h1>
+            <p>Sistema de Gerenciamento de Bares e Restaurantes</p>
+
+            <div class="menu-grid">
+                <a href="pages/contas.html" class="menu-card">
+                    <i class="bi bi-receipt menu-icon"></i>
+                    <span class="menu-title">Contas</span>
+                    <span class="menu-desc">Abertura, lançamento e fechamento de contas</span>
+                </a>
+                <a href="pages/cardapio.html" class="menu-card">
+                    <i class="bi bi-journal-text menu-icon"></i>
+                    <span class="menu-title">Cardápio</span>
+                    <span class="menu-desc">Gestão de itens do cardápio</span>
+                </a>
+                <a href="pages/tipos.html" class="menu-card">
+                    <i class="bi bi-tags menu-icon"></i>
+                    <span class="menu-title">Tipos de Item</span>
+                    <span class="menu-desc">Categorias como bebida, comida, sobremesa</span>
+                </a>
+                <a href="pages/usuarios.html" class="menu-card">
+                    <i class="bi bi-people menu-icon"></i>
+                    <span class="menu-title">Usuários</span>
+                    <span class="menu-desc">Garçons, cozinha, atendentes e admins</span>
+                </a>
+                <a href="pages/configuracao.html" class="menu-card">
+                    <i class="bi bi-sliders menu-icon"></i>
+                    <span class="menu-title">Configuração</span>
+                    <span class="menu-desc">Valor de ingresso e modo de operação</span>
+                </a>
+                <a href="pages/cozinha.html" class="menu-card">
+                    <i class="bi bi-fire menu-icon"></i>
+                    <span class="menu-title">Cozinha</span>
+                    <span class="menu-desc">Fila de pedidos e controle de preparo</span>
+                </a>
+                <a href="pages/entregas.html" class="menu-card">
+                    <i class="bi bi-box-seam menu-icon"></i>
+                    <span class="menu-title">Entregas</span>
+                    <span class="menu-desc">Controle de saída de pedidos do balcão</span>
+                </a>
+                <a href="pages/relatorio.html" class="menu-card">
+                    <i class="bi bi-bar-chart-line menu-icon"></i>
+                    <span class="menu-title">Relatório</span>
+                    <span class="menu-desc">Faturamento e resumo por período</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>

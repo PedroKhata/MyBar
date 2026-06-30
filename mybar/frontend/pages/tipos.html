@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBar — Tipos de Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html">My<span>Bar</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="contas.html">Contas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cardapio.html">Cardápio</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="tipos.html">Tipos de Item</a></li>
+                    <li class="nav-item"><a class="nav-link" href="usuarios.html">Usuários</a></li>
+                    <li class="nav-item"><a class="nav-link" href="configuracao.html">Configuração</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cozinha.html">Cozinha</a></li>
+                    <li class="nav-item"><a class="nav-link" href="entregas.html">Entregas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="relatorio.html">Relatório</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+
+        <!-- CABEÇALHO DA PÁGINA -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1" style="font-weight: 700;">Tipos de Item</h2>
+                <p style="color: var(--text-secondary); margin: 0;">Gerencie as categorias de itens do cardápio</p>
+            </div>
+            <button class="btn-accent" onclick="abrirModalNovo()">
+                <i class="bi bi-plus-lg me-2"></i>Novo Tipo
+            </button>
+        </div>
+
+        <!-- FILTRO DE PESQUISA -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-search icon"></i>Pesquisar
+            </div>
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label">Descrição</label>
+                        <input type="text" id="filtroDescricao" class="form-control" placeholder="Ex: Bebida, Comida...">
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn-accent w-100" onclick="pesquisar()">
+                            <i class="bi bi-search me-2"></i>Pesquisar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABELA DE RESULTADOS -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-tags icon"></i>Tipos Cadastrados
+            </div>
+            <div class="card-body p-0">
+                <div id="alertArea" class="p-3" style="display:none;"></div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descrição</th>
+                                <th>Gorjeta</th>
+                                <th>Cozinha?</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaTipos">
+                            <tr>
+                                <td colspan="5" class="text-center py-4" style="color: var(--text-secondary);">
+                                    <i class="bi bi-inbox" style="font-size: 1.5rem;"></i>
+                                    <p class="mt-2 mb-0">Nenhum tipo encontrado</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INCLUSÃO/EDIÇÃO -->
+    <div class="modal fade" id="modalTipo" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTituloTipo">Novo Tipo de Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="tipoCodigo">
+                    <div class="mb-3">
+                        <label class="form-label">Descrição <span class="required">*</span></label>
+                        <input type="text" id="tipoDescricao" class="form-control" placeholder="Ex: Bebida" maxlength="255">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Gorjeta (%) <span class="required">*</span></label>
+                        <input type="number" id="tipoGorjeta" class="form-control" placeholder="Ex: 10" min="0" max="100" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Vai para a Cozinha? <span class="required">*</span></label>
+                        <select id="tipoCozinha" class="form-select">
+                            <option value="true">Sim</option>
+                            <option value="false">Não</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-accent" onclick="salvar()">
+                        <i class="bi bi-check-lg me-2"></i>Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
+    <div class="modal fade" id="modalExcluir" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-secondary);">Tem certeza que deseja excluir o tipo <strong id="nomeExcluir" style="color: var(--text-primary);"></strong>?</p>
+                    <p class="mb-0" style="color: var(--accent); font-size: 0.875rem;">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        Se houver itens vinculados, a exclusão será impedida.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-danger-custom" style="padding: 0.5rem 1.25rem;" onclick="confirmarExclusao()">
+                        <i class="bi bi-trash me-2"></i>Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script>
+        let modalTipo, modalExcluir;
+        let codigoParaExcluir = null;
+        let modoVisualizacao = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            modalTipo = new bootstrap.Modal(document.getElementById('modalTipo'));
+            modalExcluir = new bootstrap.Modal(document.getElementById('modalExcluir'));
+            carregarTodos();
+        });
+
+        async function carregarTodos() {
+            try {
+                const tipos = await TipoItemAPI.listar();
+                renderTabela(tipos);
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar tipos: ' + err.message, 'error');
+            }
+        }
+
+        async function pesquisar() {
+            const filtro = document.getElementById('filtroDescricao').value.toLowerCase();
+            try {
+                const tipos = await TipoItemAPI.listar();
+                const filtrados = tipos.filter(t => t.descricao.toLowerCase().includes(filtro));
+                renderTabela(filtrados);
+            } catch (err) {
+                mostrarAlerta('Erro ao pesquisar: ' + err.message, 'error');
+            }
+        }
+
+        function renderTabela(tipos) {
+            const tbody = document.getElementById('tabelaTipos');
+            if (!tipos || tipos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-4" style="color: var(--text-secondary);">
+                            <i class="bi bi-inbox" style="font-size: 1.5rem;"></i>
+                            <p class="mt-2 mb-0">Nenhum tipo encontrado</p>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            tbody.innerHTML = tipos.map(t => `
+                <tr>
+                    <td><span style="color: var(--text-secondary); font-family: monospace;">${t.codigo}</span></td>
+                    <td><strong>${t.descricao}</strong></td>
+                    <td>${t.gorjeta}%</td>
+                    <td>
+                        <span class="badge-status ${t.cozinha ? 'badge-aberta' : 'badge-fechada'}">
+                            ${t.cozinha ? 'Sim' : 'Não'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn-view-custom" onclick="visualizar(${t.codigo})">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn-edit-custom" onclick="editar(${t.codigo})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn-danger-custom" onclick="excluir(${t.codigo}, '${t.descricao}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function abrirModalNovo() {
+            modoVisualizacao = false;
+            document.getElementById('modalTituloTipo').textContent = 'Novo Tipo de Item';
+            document.getElementById('tipoCodigo').value = '';
+            document.getElementById('tipoDescricao').value = '';
+            document.getElementById('tipoGorjeta').value = '';
+            document.getElementById('tipoCozinha').value = 'false';
+            setFieldsReadonly(false);
+            modalTipo.show();
+        }
+
+        async function visualizar(codigo) {
+            try {
+                const tipo = await TipoItemAPI.buscar(codigo);
+                modoVisualizacao = true;
+                document.getElementById('modalTituloTipo').textContent = 'Visualizar Tipo de Item';
+                document.getElementById('tipoCodigo').value = tipo.codigo;
+                document.getElementById('tipoDescricao').value = tipo.descricao;
+                document.getElementById('tipoGorjeta').value = tipo.gorjeta;
+                document.getElementById('tipoCozinha').value = tipo.cozinha;
+                setFieldsReadonly(true);
+                modalTipo.show();
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar tipo: ' + err.message, 'error');
+            }
+        }
+
+        async function editar(codigo) {
+            try {
+                const tipo = await TipoItemAPI.buscar(codigo);
+                modoVisualizacao = false;
+                document.getElementById('modalTituloTipo').textContent = 'Editar Tipo de Item';
+                document.getElementById('tipoCodigo').value = tipo.codigo;
+                document.getElementById('tipoDescricao').value = tipo.descricao;
+                document.getElementById('tipoGorjeta').value = tipo.gorjeta;
+                document.getElementById('tipoCozinha').value = tipo.cozinha;
+                setFieldsReadonly(false);
+                modalTipo.show();
+            } catch (err) {
+                mostrarAlerta('Erro ao carregar tipo: ' + err.message, 'error');
+            }
+        }
+
+        function setFieldsReadonly(readonly) {
+            ['tipoDescricao', 'tipoGorjeta', 'tipoCozinha'].forEach(id => {
+                document.getElementById(id).disabled = readonly;
+            });
+            document.querySelector('#modalTipo .modal-footer .btn-accent').style.display = readonly ? 'none' : '';
+        }
+
+        async function salvar() {
+            const descricao = document.getElementById('tipoDescricao').value.trim();
+            const gorjeta = document.getElementById('tipoGorjeta').value;
+            const cozinha = document.getElementById('tipoCozinha').value === 'true';
+            const codigo = document.getElementById('tipoCodigo').value;
+
+            if (!descricao || gorjeta === '') {
+                mostrarAlerta('Preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+
+            const data = { descricao, gorjeta: parseFloat(gorjeta), cozinha };
+
+            try {
+                if (codigo) {
+                    await TipoItemAPI.atualizar(codigo, data);
+                    mostrarAlerta('Tipo atualizado com sucesso!', 'success');
+                } else {
+                    await TipoItemAPI.salvar(data);
+                    mostrarAlerta('Tipo cadastrado com sucesso!', 'success');
+                }
+                modalTipo.hide();
+                carregarTodos();
+            } catch (err) {
+                mostrarAlerta('Erro ao salvar: ' + err.message, 'error');
+            }
+        }
+
+        function excluir(codigo, descricao) {
+            codigoParaExcluir = codigo;
+            document.getElementById('nomeExcluir').textContent = descricao;
+            modalExcluir.show();
+        }
+
+        async function confirmarExclusao() {
+            try {
+                await TipoItemAPI.deletar(codigoParaExcluir);
+                mostrarAlerta('Tipo excluído com sucesso!', 'success');
+                modalExcluir.hide();
+                carregarTodos();
+            } catch (err) {
+                modalExcluir.hide();
+                mostrarAlerta('Erro ao excluir: ' + err.message, 'error');
+            }
+        }
+
+        function mostrarAlerta(msg, tipo) {
+            const area = document.getElementById('alertArea');
+            area.style.display = 'block';
+            area.innerHTML = `
+                <div class="alert-custom ${tipo === 'error' ? 'alert-error' : 'alert-success'}">
+                    <i class="bi bi-${tipo === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>${msg}
+                </div>`;
+            setTimeout(() => { area.style.display = 'none'; }, 4000);
+        }
+    </script>
+</body>
+</html>
