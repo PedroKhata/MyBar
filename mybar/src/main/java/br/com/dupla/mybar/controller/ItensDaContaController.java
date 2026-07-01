@@ -24,8 +24,9 @@ public class ItensDaContaController {
         return ResponseEntity.ok(itensDaContaService.lancar(request));
     }
 
+    // AJUSTE: Retorno padronizado com ResponseEntity
     @GetMapping("/conta/{contaId}")
-    public List<ItensDaContaResponse> listarPorConta(@PathVariable Long contaId) {
-        return itensDaContaService.listarPorConta(contaId);
+    public ResponseEntity<List<ItensDaContaResponse>> listarPorConta(@PathVariable Long contaId) {
+        return ResponseEntity.ok(itensDaContaService.listarPorConta(contaId));
     }
 }

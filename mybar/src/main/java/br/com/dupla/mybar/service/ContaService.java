@@ -6,6 +6,7 @@ import br.com.dupla.mybar.dto.conta.ContaResponse;
 import br.com.dupla.mybar.entity.*;
 import br.com.dupla.mybar.exception.RegraNegocioException;
 import br.com.dupla.mybar.repository.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,16 +40,28 @@ public class ContaService {
         Cliente cliente = clienteRepository.findById(request.clienteId())
                 .orElseThrow(() -> new RegraNegocioException("Cliente não encontrado."));
 
-        Integer proximoNumero = contaRepository.findMaxNumero() + 1;
+        int tentativas = 0;
+        while (tentativas < 5) {
+            try {
+                Integer proximoNumero = contaRepository.findMaxNumero() + 1;
 
-        Conta conta = new Conta();
-        conta.setNumero(proximoNumero);
-        conta.setStatus("ABERTA");
-        conta.setDataAbertura(LocalDate.now());
-        conta.setHoraAbertura(LocalTime.now());
-        conta.setCliente(cliente);
+                Conta conta = new Conta();
+                conta.setNumero(proximoNumero);
+                conta.setStatus("ABERTA");
+                conta.setDataAbertura(LocalDate.now());
+                conta.setHoraAbertura(LocalTime.now());
+                conta.setCliente(cliente);
 
-        return new ContaResponse(contaRepository.save(conta));
+                // O saveAndFlush força a execução da query imediatamente para pegar colisões de índice único
+                return new ContaResponse(contaRepository.saveAndFlush(conta));
+            } catch (DataIntegrityViolationException e) {
+                tentativas++;
+                if (tentativas >= 5) {
+                    throw new RegraNegocioException("Não foi possível gerar um número de conta exclusivo devido à alta concorrência. Tente novamente.");
+                }
+            }
+        }
+        throw new RegraNegocioException("Erro ao abrir conta.");
     }
 
     public List<ContaResponse> listarAbertas() {

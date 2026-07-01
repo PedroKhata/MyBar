@@ -10,6 +10,7 @@ import br.com.dupla.mybar.exception.RegraNegocioException;
 import br.com.dupla.mybar.repository.ContaRepository;
 import br.com.dupla.mybar.repository.PagamentoRepository;
 import br.com.dupla.mybar.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +22,14 @@ public class PagamentoService {
     private final PagamentoRepository pagamentoRepository;
     private final ContaRepository contaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public PagamentoService(PagamentoRepository pagamentoRepository, ContaRepository contaRepository, UsuarioRepository usuarioRepository) {
+    public PagamentoService(PagamentoRepository pagamentoRepository, ContaRepository contaRepository,
+                            UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.pagamentoRepository = pagamentoRepository;
         this.contaRepository = contaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public PagamentoResponse lancar(PagamentoRequest request) {
@@ -69,11 +73,11 @@ public class PagamentoService {
                 .orElseThrow(() -> new RegraNegocioException("Usuário administrador não encontrado."));
 
         // Validação de segurança dupla: Checa o cargo e a senha (case sensitive)
-        if (!"ADMIN".equalsIgnoreCase(admin.getTipo().name())) {
+        if (!"ADMINISTRADOR".equalsIgnoreCase(admin.getTipo().name()) && !"ADMIN".equalsIgnoreCase(admin.getTipo().name())) {
             throw new RegraNegocioException("Apenas usuários do tipo ADMIN podem cancelar pagamentos.");
         }
 
-        if (!admin.getSenha().equals(request.senhaAdmin())) {
+        if (!passwordEncoder.matches(request.senhaAdmin(), admin.getSenha())) {
             throw new RegraNegocioException("Senha de administrador incorreta. Estorno negado.");
         }
 

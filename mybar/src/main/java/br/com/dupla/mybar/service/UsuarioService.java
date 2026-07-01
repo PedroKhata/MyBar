@@ -6,7 +6,9 @@ import br.com.dupla.mybar.entity.Usuario;
 import br.com.dupla.mybar.exception.RegraNegocioException;
 import br.com.dupla.mybar.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,16 +16,18 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UsuarioResponse salvar(UsuarioRequest dto) {
         Usuario usuario = new Usuario();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
-        usuario.setSenha(dto.senha());
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
         usuario.setTipo(dto.tipo());
         usuario.setAtivo(true);
 
@@ -36,8 +40,8 @@ public class UsuarioService {
     }
 
     public List<UsuarioResponse> listarAtivos() {
-        return usuarioRepository.findAll().stream()
-                .filter(Usuario::getAtivo)
+        // Uso da nova query method do repositório, removendo o filtro em memória
+        return usuarioRepository.findByAtivoTrue().stream()
                 .map(UsuarioResponse::new)
                 .collect(Collectors.toList());
     }

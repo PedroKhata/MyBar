@@ -41,6 +41,11 @@ public class ItensDaContaService {
         Conta conta = contaRepository.findById(request.contaId())
                 .orElseThrow(() -> new RegraNegocioException("Conta não encontrada."));
 
+        // NOVA VALIDAÇÃO
+        if ("FECHADA".equalsIgnoreCase(conta.getStatus())) {
+            throw new RegraNegocioException("Esta conta já está fechada e não aceita novos pedidos.");
+        }
+
         ItemCardapio item = itemCardapioRepository.findById(request.itemCardapioCodigo())
                 .orElseThrow(() -> new RegraNegocioException("Item de cardápio não encontrado."));
 
