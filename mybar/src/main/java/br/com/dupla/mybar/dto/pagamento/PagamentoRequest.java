@@ -15,6 +15,9 @@ public record PagamentoRequest(
         @NotBlank(message = "A forma de pagamento (PIX, DEBITO, CREDITO, DINHEIRO) é obrigatória.")
         String forma,
 
+        @NotBlank(message = "A senha do garçom é obrigatória.")
+        String senhaCaixa,
+
         @NotNull(message = "O valor é obrigatório.")
         @Positive(message = "O valor do pagamento deve ser maior que zero.")
         BigDecimal valor

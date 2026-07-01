@@ -21,8 +21,8 @@ public class ItemCardapioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemCardapioResponse>> listarTodos() {
-        return ResponseEntity.ok(itemCardapioService.listarTodos());
+    public ResponseEntity<List<ItemCardapioResponse>> listar() {
+        return ResponseEntity.ok(itemCardapioService.listarAtivos());
     }
 
     @GetMapping("/{codigo}")
@@ -41,8 +41,8 @@ public class ItemCardapioController {
     }
 
     @DeleteMapping("/{codigo}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
-        itemCardapioService.deletar(codigo);
+    public ResponseEntity<Void> remover(@PathVariable Integer codigo) {
+        itemCardapioService.excluirOuDesativar(codigo);
         return ResponseEntity.noContent().build();
     }
 }

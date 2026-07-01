@@ -47,6 +47,10 @@ public class ItensDaContaService {
         Usuario usuario = usuarioRepository.findById(request.quemLancouCodigo())
                 .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado."));
 
+        if (!usuario.getSenha().equals(request.senhaGarcom())) {
+            throw new RegraNegocioException("Senha incorreta. Lançamento não autorizado.");
+        }
+
         ItensDaConta itemDaConta = new ItensDaConta();
         itemDaConta.setConta(conta);
         itemDaConta.setItemCardapio(item);
@@ -64,5 +68,26 @@ public class ItensDaContaService {
                 .stream()
                 .map(ItensDaContaResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    public void cancelarItem(Long idItem, br.com.dupla.mybar.dto.conta.CancelamentoRequest request) {
+        Usuario admin = usuarioRepository.findById(request.codigoAdmin())
+                .orElseThrow(() -> new RegraNegocioException("Administrador não encontrado."));
+
+        if (admin.getTipo() != br.com.dupla.mybar.entity.TipoUsuario.ADMINISTRADOR) {
+            throw new RegraNegocioException("Apenas administradores podem autorizar a exclusão de itens.");
+        }
+
+        if (!admin.getSenha().equals(request.senhaAdmin())) {
+            throw new RegraNegocioException("Senha de administrador incorreta.");
+        }
+
+        ItensDaConta item = itensDaContaRepository.findById(idItem)
+                .orElseThrow(() -> new RegraNegocioException("Item não encontrado na conta."));
+
+        item.setAtivo(false);
+        item.setQuemRemoveu(admin);
+
+        itensDaContaRepository.save(item);
     }
 }

@@ -402,3 +402,13 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* Correção para campos desativados no tema escuro */
+.form-control:disabled,
+.form-select:disabled {
+    background-color: #1a1a2e !important; /* Cor mais escura que o fundo do modal */
+    color: #ffffff !important;           /* Texto branco para leitura clara */
+    opacity: 1;
+    border: 1px solid var(--border);
+    cursor: not-allowed;
+}

@@ -293,10 +293,14 @@
         }
 
         function setFieldsReadonly(readonly) {
-            ['usuarioNome', 'usuarioTipo', 'usuarioEmail', 'usuarioSenha'].forEach(id => {
-                document.getElementById(id).disabled = readonly;
+            ['usuarioCodigoInput', 'usuarioNome', 'usuarioTipo', 'usuarioEmail', 'usuarioSenha'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = readonly;
             });
-            document.getElementById('btnSalvarUsuario').style.display = readonly ? 'none' : '';
+
+            // Esconde o botão Salvar se estiver apenas visualizando
+            const btnSalvar = document.getElementById('btnSalvarUsuario');
+            if (btnSalvar) btnSalvar.style.display = readonly ? 'none' : 'block';
         }
 
         async function salvar() {
