@@ -20,26 +20,25 @@ public class UsuarioService {
     }
 
     public UsuarioResponse salvar(UsuarioRequest dto) {
+        if (usuarioRepository.existsById(dto.codigo())) {
+            throw new RegraNegocioException("Já existe um utilizador registrado com o código " + dto.codigo());
+        }
+
         Usuario usuario = new Usuario();
+        usuario.setCodigo(dto.codigo());
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
         usuario.setSenha(dto.senha());
         usuario.setTipo(dto.tipo());
         usuario.setAtivo(true);
 
-        try {
-            usuario = usuarioRepository.save(usuario);
-            return new UsuarioResponse(usuario);
-        } catch (DataIntegrityViolationException e) {
-            throw new RegraNegocioException("E-mail já cadastrado no sistema.");
-        }
+        return new UsuarioResponse(usuarioRepository.save(usuario));
     }
 
     public List<UsuarioResponse> listarAtivos() {
-        return usuarioRepository.findAll().stream()
-                .filter(Usuario::getAtivo)
+        return usuarioRepository.findByAtivoTrue().stream()
                 .map(UsuarioResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void excluirOuDesativar(Integer codigo) {
@@ -48,9 +47,30 @@ public class UsuarioService {
 
         try {
             usuarioRepository.delete(usuario);
+            usuarioRepository.flush();
         } catch (DataIntegrityViolationException e) {
+
             usuario.setAtivo(false);
             usuarioRepository.save(usuario);
         }
+    }
+
+    public UsuarioResponse buscarPorCodigo(Integer codigo) {
+        Usuario usuario = usuarioRepository.findById(codigo)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        return new UsuarioResponse(usuario);
+    }
+
+    public UsuarioResponse atualizar(Integer codigo, UsuarioRequest dto) {
+        Usuario usuario = usuarioRepository.findById(codigo)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        usuario.setNome(dto.nome());
+        usuario.setEmail(dto.email());
+        usuario.setSenha(dto.senha());
+        usuario.setTipo(dto.tipo());
+
+        return new UsuarioResponse(usuarioRepository.save(usuario));
     }
 }

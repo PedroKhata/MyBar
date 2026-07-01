@@ -29,6 +29,16 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.listarAtivos());
     }
 
+    @GetMapping("/{codigo}")
+    public ResponseEntity<UsuarioResponse> buscarPorCodigo(@PathVariable Integer codigo) {
+        return ResponseEntity.ok(usuarioService.buscarPorCodigo(codigo));
+    }
+
+    @PutMapping("/{codigo}")
+    public ResponseEntity<UsuarioResponse> atualizar(@PathVariable Integer codigo, @Valid @RequestBody UsuarioRequest dto) {
+        return ResponseEntity.ok(usuarioService.atualizar(codigo, dto));
+    }
+
     @DeleteMapping("/{codigo}")
     public ResponseEntity<Void> remover(@PathVariable Integer codigo) {
         usuarioService.excluirOuDesativar(codigo);

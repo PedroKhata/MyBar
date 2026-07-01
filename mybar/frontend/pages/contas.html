@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBar — Gestão de Contas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="../index.html">My<span>Bar</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="contas.html">Contas</a></li>
+                <li class="nav-item"><a class="nav-link" href="cardapio.html">Cardápio</a></li>
+                <li class="nav-item"><a class="nav-link" href="tipos.html">Tipos de Item</a></li>
+                <li class="nav-item"><a class="nav-link" href="usuarios.html">Usuários</a></li>
+                <li class="nav-item"><a class="nav-link" href="configuracao.html">Configuração</a></li>
+                <li class="nav-item"><a class="nav-link" href="cozinha.html">Cozinha</a></li>
+                <li class="nav-item"><a class="nav-link" href="entregas.html">Entregas</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorio.html">Relatório</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div id="alertArea" class="mb-4" style="display:none;"></div>
+
+    <div id="viewListaContas">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1" style="font-weight: 700;">Contas Abertas</h2>
+                <p style="color: var(--text-secondary); margin: 0;">Selecione uma conta para lançar itens ou pagamentos</p>
+            </div>
+            <button class="btn-accent" onclick="abrirModalNovaConta()">
+                <i class="bi bi-plus-lg me-2"></i>Abrir Conta
+            </button>
+        </div>
+
+        <div class="row g-3" id="gridContas"></div>
+    </div>
+
+    <div id="viewDetalheConta" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <button class="btn-secondary-custom btn-sm mb-2" onclick="voltarListaContas()">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar
+                </button>
+                <h2 class="mb-1" style="font-weight: 700;">Conta #<span id="detalheNumeroConta"></span></h2>
+                <p style="color: var(--text-secondary); margin: 0;">Cliente: <strong id="detalheNomeCliente" style="color: var(--text-primary);"></strong></p>
+            </div>
+            <button class="btn-danger-custom" style="padding: 0.8rem 1.5rem; font-size: 1rem;" onclick="fecharConta()">
+                <i class="bi bi-check2-circle me-2"></i>Fechar Conta
+            </button>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-cup-straw icon"></i>Itens Consumidos</span>
+                        <button class="btn-accent btn-sm" onclick="abrirModalLancarItem()">Lançar Item</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Qtd</th>
+                                    <th>Descrição</th>
+                                    <th>Hora</th>
+                                    <th>Status Cozinha</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tabelaItens"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-wallet2 icon"></i>Pagamentos Registrados</span>
+                        <button class="btn-success-custom btn-sm" onclick="abrirModalLancarPagamento()">Lançar Pagto</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Forma</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tabelaPagamentos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalNovaConta" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Abrir Nova Conta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">CPF do Cliente <span class="required">*</span></label>
+                    <input type="text" id="novaContaCpf" class="form-control" placeholder="Apenas números">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nome <span class="required">*</span></label>
+                    <input type="text" id="novaContaNome" class="form-control" placeholder="Nome completo">
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label">Celular</label>
+                        <input type="text" id="novaContaCelular" class="form-control" placeholder="Ex: 86999999999">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Sexo <span class="required">*</span></label>
+                        <select id="novaContaSexo" class="form-select">
+                            <option value="">Selecione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-accent" onclick="confirmarNovaConta()">Abrir Conta</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLancarItem" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lançar Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Item do Cardápio <span class="required">*</span></label>
+                    <select id="itemCardapioCodigo" class="form-select"></select>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label">Quantidade <span class="required">*</span></label>
+                        <input type="number" id="itemQuantidade" class="form-control" value="1" min="1">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Cód. Garçom <span class="required">*</span></label>
+                        <input type="number" id="itemQuemLancou" class="form-control" placeholder="Ex: 1010">
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label class="form-label">Senha do Garçom <span class="required">*</span></label>
+                        <input type="password" id="itemSenhaGarcom" class="form-control" placeholder="4 dígitos" maxlength="4">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-accent" onclick="confirmarLancarItem()">Lançar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLancarPagamento" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Pagamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Forma de Pagamento <span class="required">*</span></label>
+                    <select id="pagamentoForma" class="form-select">
+                        <option value="PIX">PIX</option>
+                        <option value="CREDITO">Cartão de Crédito</option>
+                        <option value="DEBITO">Cartão de Débito</option>
+                        <option value="DINHEIRO">Dinheiro</option>
+                    </select>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label">Valor (R$) <span class="required">*</span></label>
+                        <input type="number" id="pagamentoValor" class="form-control" min="0" step="0.01">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Cód. Caixa <span class="required">*</span></label>
+                        <input type="number" id="pagamentoQuemLancou" class="form-control" placeholder="Ex: 2020">
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label class="form-label">Senha do Caixa <span class="required">*</span></label>
+                        <input type="password" id="pagamentoSenhaCaixa" class="form-control" placeholder="4 dígitos" maxlength="4">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-success-custom" style="padding: 0.5rem 1rem;" onclick="confirmarLancarPagamento()">Registrar Pagamento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCancelarPagamento" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Estorno de Pagamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary);">Esta ação requer autorização de um Administrador.</p>
+                <input type="hidden" id="cancelarPagamentoId">
+                <div class="mb-3">
+                    <label class="form-label">Código do Administrador <span class="required">*</span></label>
+                    <input type="number" id="adminCancelCodigo" class="form-control" placeholder="Ex: 9999">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Senha <span class="required">*</span></label>
+                    <input type="password" id="adminCancelSenha" class="form-control" placeholder="4 dígitos">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-danger-custom" style="padding: 0.5rem 1rem;" onclick="confirmarCancelamento()">Autorizar Estorno</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCancelarItem" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Excluir Item da Conta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary);">Esta ação requer autorização de um Administrador.</p>
+                <input type="hidden" id="cancelarItemId">
+                <div class="mb-3">
+                    <label class="form-label">Código do Administrador <span class="required">*</span></label>
+                    <input type="number" id="adminCancelItemCodigo" class="form-control" placeholder="Ex: 9999">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Senha <span class="required">*</span></label>
+                    <input type="password" id="adminCancelItemSenha" class="form-control" placeholder="4 dígitos">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-danger-custom" style="padding: 0.5rem 1rem;" onclick="confirmarCancelamentoItem()">Autorizar Exclusão</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalRecibo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" style="color: var(--success);">Conta Fechada com Sucesso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <i class="bi bi-receipt" style="font-size: 3rem; color: var(--text-secondary);"></i>
+                <h3 class="mt-3 mb-4" id="reciboTotalAPagar" style="color: var(--text-primary);">R$ 0,00</h3>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span style="color: var(--text-secondary);">Total Consumo:</span>
+                    <strong id="reciboConsumo">R$ 0,00</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span style="color: var(--text-secondary);">Total Gorjeta:</span>
+                    <strong id="reciboGorjeta">R$ 0,00</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-3" style="border-color: var(--border) !important;">
+                    <span style="color: var(--text-secondary);">Valor Ingresso:</span>
+                    <strong id="reciboIngresso">R$ 0,00</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span style="color: var(--text-secondary);">Total Pago pelo Cliente:</span>
+                    <strong style="color: var(--success);" id="reciboTotalPago">R$ 0,00</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span style="color: var(--text-secondary);">Troco a Devolver:</span>
+                    <strong style="color: var(--accent);" id="reciboTroco">R$ 0,00</strong>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accent w-100" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script>
+    let contaAtual = null;
+    let modals = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+        modals.novaConta = new bootstrap.Modal(document.getElementById('modalNovaConta'));
+        modals.lancarItem = new bootstrap.Modal(document.getElementById('modalLancarItem'));
+        modals.lancarPagamento = new bootstrap.Modal(document.getElementById('modalLancarPagamento'));
+        modals.cancelarPagamento = new bootstrap.Modal(document.getElementById('modalCancelarPagamento'));
+        modals.recibo = new bootstrap.Modal(document.getElementById('modalRecibo'));
+        modals.cancelarItem = new bootstrap.Modal(document.getElementById('modalCancelarItem'));
+
+        carregarContasAbertas();
+        carregarCardapio();
+    });
+
+
+    async function carregarContasAbertas() {
+        try {
+            const contas = await ContaAPI.listarAbertas();
+            const grid = document.getElementById('gridContas');
+
+            if (!contas || contas.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 2rem; color: var(--text-secondary);"></i>
+                        <p class="mt-2" style="color: var(--text-secondary);">Nenhuma conta aberta no momento.</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = contas.map(c => `
+                <div class="col-md-4 col-lg-3">
+                    <div class="card h-100" style="cursor: pointer; border-left: 4px solid var(--success);" onclick="abrirDetalhes(${c.id}, ${c.numero}, '${c.clienteNome}')">
+                        <div class="card-body">
+                            <h3 class="mb-1" style="font-weight: 700;">#${c.numero}</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;" class="mb-2"><i class="bi bi-person me-1"></i>${c.clienteNome}</p>
+                            <span class="badge-status badge-aberta"><i class="bi bi-clock me-1"></i>${c.horaAbertura.slice(0, 5)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            mostrarAlerta('Erro ao listar contas: ' + err.message, 'error');
+        }
+    }
+
+    function abrirDetalhes(id, numero, nomeCliente) {
+        contaAtual = id;
+        document.getElementById('detalheNumeroConta').textContent = numero;
+        document.getElementById('detalheNomeCliente').textContent = nomeCliente;
+        document.getElementById('viewListaContas').style.display = 'none';
+        document.getElementById('viewDetalheConta').style.display = 'block';
+        recarregarDashConta();
+    }
+
+    function voltarListaContas() {
+        contaAtual = null;
+        document.getElementById('viewDetalheConta').style.display = 'none';
+        document.getElementById('viewListaContas').style.display = 'block';
+        carregarContasAbertas();
+    }
+
+    function recarregarDashConta() {
+        carregarItens();
+        carregarPagamentos();
+    }
+
+    function abrirModalNovaConta() {
+        document.getElementById('novaContaCpf').value = '';
+        document.getElementById('novaContaNome').value = '';
+        document.getElementById('novaContaCelular').value = '';
+        document.getElementById('novaContaSexo').value = '';
+        modals.novaConta.show();
+    }
+
+    async function confirmarNovaConta() {
+        const cpf = document.getElementById('novaContaCpf').value.trim();
+        const nome = document.getElementById('novaContaNome').value.trim();
+        const celular = document.getElementById('novaContaCelular').value.trim();
+        const sexo = document.getElementById('novaContaSexo').value;
+
+        if (!cpf || !nome || !sexo) {
+            return mostrarAlerta('Preencha CPF, Nome e Sexo.', 'error');
+        }
+
+        try {
+            await ContaAPI.abrir({ cpf, nome, celular, sexo });
+            mostrarAlerta('Conta aberta com sucesso!', 'success');
+            modals.novaConta.hide();
+            carregarContasAbertas();
+        } catch (err) {
+            mostrarAlerta('Erro ao abrir conta: ' + err.message, 'error');
+        }
+    }
+
+    async function fecharConta() {
+        if (!confirm('Deseja realmente processar o fecho desta conta?')) return;
+
+        try {
+            const resumo = await ContaAPI.fechar(contaAtual);
+            const formataBRL = (v) => `R$ ${parseFloat(v).toFixed(2).replace('.', ',')}`;
+
+            document.getElementById('reciboConsumo').textContent = formataBRL(resumo.totalConsumo);
+            document.getElementById('reciboGorjeta').textContent = formataBRL(resumo.totalGorjeta);
+            document.getElementById('reciboIngresso').textContent = formataBRL(resumo.valorIngresso);
+            document.getElementById('reciboTotalAPagar').textContent = formataBRL(resumo.totalAPagar);
+            document.getElementById('reciboTotalPago').textContent = formataBRL(resumo.totalPago);
+            document.getElementById('reciboTroco').textContent = formataBRL(resumo.troco);
+
+            modals.recibo.show();
+            voltarListaContas();
+        } catch (err) {
+            mostrarAlerta('Erro ao fechar conta: ' + err.message, 'error');
+        }
+    }
+
+    async function carregarCardapio() {
+        try {
+            const itens = await ItemCardapioAPI.listar();
+            const select = document.getElementById('itemCardapioCodigo');
+            select.innerHTML = itens.map(i => `<option value="${i.codigo}">${i.descricao} - R$ ${i.valor}</option>`).join('');
+        } catch (err) {
+            console.error('Não foi possível carregar o cardápio.', err);
+        }
+    }
+
+    async function carregarItens() {
+        try {
+            const itens = await ItensDaContaAPI.listarPorConta(contaAtual);
+            const tbody = document.getElementById('tabelaItens');
+
+            if (!itens || itens.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center" style="color: var(--text-secondary);">Nenhum item consumido</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = itens.map(i => `
+                <tr>
+                    <td><strong>${i.quantidade}x</strong></td>
+                    <td>${i.itemCardapioDescricao}</td>
+                    <td style="color: var(--text-secondary);">${i.horaSolicitacao.slice(0, 5)}</td>
+                    <td class="d-flex justify-content-between align-items-center">
+                        ${i.dataEntregaBar ? '<span class="badge-status badge-entregue">Entregue</span>' :
+                i.dataRecebimentoCozinha ? '<span class="badge-status badge-recebido">Em Preparo</span>' :
+                    '<span class="badge-status badge-solicitado">Solicitado</span>'}
+
+                        <button class="btn-danger-custom ms-2" onclick="abrirModalCancelarItem(${i.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (err) {
+            mostrarAlerta('Erro ao listar itens.', 'error');
+        }
+    }
+
+    function abrirModalLancarItem() {
+        document.getElementById('itemQuantidade').value = '1';
+        document.getElementById('itemQuemLancou').value = '';
+        document.getElementById('itemSenhaGarcom').value = '';
+        modals.lancarItem.show();
+    }
+
+    async function confirmarLancarItem() {
+        const itemCardapioCodigo = document.getElementById('itemCardapioCodigo').value;
+        const quantidade = document.getElementById('itemQuantidade').value;
+        const quemLancouCodigo = document.getElementById('itemQuemLancou').value;
+        const senhaGarcom = document.getElementById('itemSenhaGarcom').value;
+
+        if (!quantidade || !quemLancouCodigo || !senhaGarcom) {
+            return mostrarAlerta('Preencha a quantidade, código e senha do garçom.', 'error');
+        }
+
+        try {
+            await ItensDaContaAPI.lancar({
+                contaId: contaAtual,
+                itemCardapioCodigo: parseInt(itemCardapioCodigo),
+                quemLancouCodigo: parseInt(quemLancouCodigo),
+                senhaGarcom: senhaGarcom,
+                quantidade: parseInt(quantidade)
+            });
+            modals.lancarItem.hide();
+            carregarItens();
+        } catch (err) {
+            mostrarAlerta('Lançamento negado: ' + err.message, 'error');
+        }
+    }
+
+    async function carregarPagamentos() {
+        try {
+            const pagamentos = await PagamentoAPI.listarPorConta(contaAtual);
+            const tbody = document.getElementById('tabelaPagamentos');
+
+            if (!pagamentos || pagamentos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="text-center" style="color: var(--text-secondary);">Nenhum pagamento</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = pagamentos.map(p => `
+                <tr>
+                    <td>${p.forma}</td>
+                    <td style="color: var(--success); font-weight: 600;">R$ ${parseFloat(p.valor).toFixed(2).replace('.', ',')}</td>
+                    <td>
+                        <button class="btn-danger-custom" onclick="abrirModalCancelarPagamento(${p.id})">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            mostrarAlerta('Erro ao listar pagamentos.', 'error');
+        }
+    }
+
+    function abrirModalLancarPagamento() {
+        document.getElementById('pagamentoValor').value = '';
+        document.getElementById('pagamentoQuemLancou').value = '';
+        document.getElementById('pagamentoSenhaCaixa').value = '';
+        modals.lancarPagamento.show();
+    }
+
+    async function confirmarLancarPagamento() {
+        const forma = document.getElementById('pagamentoForma').value;
+        const valor = document.getElementById('pagamentoValor').value;
+        const quemLancouCodigo = document.getElementById('pagamentoQuemLancou').value;
+        const senhaCaixa = document.getElementById('pagamentoSenhaCaixa').value;
+
+        if (!valor || !quemLancouCodigo || !senhaCaixa) {
+            return mostrarAlerta('Preencha valor, código e senha do caixa.', 'error');
+        }
+
+        try {
+            await PagamentoAPI.lancar({
+                contaId: contaAtual,
+                forma,
+                valor: parseFloat(valor),
+                quemLancouCodigo: parseInt(quemLancouCodigo),
+                senhaCaixa: senhaCaixa
+            });
+            modals.lancarPagamento.hide();
+            carregarPagamentos();
+        } catch (err) {
+            mostrarAlerta('Pagamento negado: ' + err.message, 'error');
+        }
+    }
+
+    function abrirModalCancelarPagamento(id) {
+        document.getElementById('cancelarPagamentoId').value = id;
+        document.getElementById('adminCancelCodigo').value = '';
+        document.getElementById('adminCancelSenha').value = '';
+        modals.cancelarPagamento.show();
+    }
+
+    async function confirmarCancelamento() {
+        const id = document.getElementById('cancelarPagamentoId').value;
+        const adminCod = document.getElementById('adminCancelCodigo').value;
+        const adminSenha = document.getElementById('adminCancelSenha').value;
+
+        try {
+            await PagamentoAPI.cancelar(id, {
+                quemExcluiuCodigo: parseInt(adminCod),
+                senhaAdmin: adminSenha
+            });
+            mostrarAlerta('Pagamento estornado com sucesso!', 'success');
+            modals.cancelarPagamento.hide();
+            carregarPagamentos();
+        } catch (err) {
+            mostrarAlerta('Estorno negado: ' + err.message, 'error');
+        }
+    }
+
+    function mostrarAlerta(msg, tipo) {
+        const area = document.getElementById('alertArea');
+        area.style.display = 'block';
+        area.innerHTML = `
+            <div class="alert-custom ${tipo === 'error' ? 'alert-error' : 'alert-success'}">
+                <i class="bi bi-${tipo === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>${msg}
+            </div>`;
+        setTimeout(() => { area.style.display = 'none'; }, 4000);
+        window.scrollTo(0, 0);
+    }
+
+    function abrirModalCancelarItem(id) {
+        document.getElementById('cancelarItemId').value = id;
+        document.getElementById('adminCancelItemCodigo').value = '';
+        document.getElementById('adminCancelItemSenha').value = '';
+        modals.cancelarItem.show();
+    }
+
+    async function confirmarCancelamentoItem() {
+        const id = document.getElementById('cancelarItemId').value;
+        const adminCod = document.getElementById('adminCancelItemCodigo').value;
+        const adminSenha = document.getElementById('adminCancelItemSenha').value;
+
+        if (!adminCod || !adminSenha) {
+            return mostrarAlerta('Preencha as credenciais do Administrador.', 'error');
+        }
+
+        try {
+            await ItensDaContaAPI.cancelarItem(id, {
+                codigoAdmin: parseInt(adminCod),
+                senhaAdmin: adminSenha
+            });
+            mostrarAlerta('Item removido da conta com sucesso!', 'success');
+            modals.cancelarItem.hide();
+            carregarItens();
+        } catch (err) {
+            mostrarAlerta('Exclusão negada: ' + err.message, 'error');
+        }
+    }
+
+</script>
+</body>
+</html>

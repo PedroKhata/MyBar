@@ -50,6 +50,7 @@ public class ItemCardapioService {
         item.setDescricao(request.descricao());
         item.setValor(request.valor());
         item.setTipo(tipo);
+        tipo.setAtivo(true);
 
         return new ItemCardapioResponse(itemCardapioRepository.save(item));
     }
@@ -75,6 +76,25 @@ public class ItemCardapioService {
             itemCardapioRepository.delete(item);
         } catch (DataIntegrityViolationException e) {
             throw new RegraNegocioException("Não é possível excluir: este item está vinculado a uma conta.");
+        }
+    }
+
+    public List<ItemCardapioResponse> listarAtivos() {
+        return itemCardapioRepository.findByAtivoTrue().stream()
+                .map(ItemCardapioResponse::new)
+                .toList();
+    }
+
+    public void excluirOuDesativar(Integer codigo) {
+        ItemCardapio itemCardapio = itemCardapioRepository.findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("Item do cardápio não encontrado."));
+
+        try {
+            itemCardapioRepository.delete(itemCardapio);
+            itemCardapioRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            itemCardapio.setAtivo(false);
+            itemCardapioRepository.save(itemCardapio);
         }
     }
 }

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class TipoItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "codigo")
     private Integer codigo;
 
     @Column(nullable = false)
@@ -19,6 +19,9 @@ public class TipoItem {
 
     @Column(nullable = false)
     private Boolean cozinha;
+
+    @Column(name = "ativo")
+    private Boolean ativo = true;
 
     public TipoItem() {}
 
@@ -31,4 +34,11 @@ public class TipoItem {
     public void setGorjeta(BigDecimal gorjeta) { this.gorjeta = gorjeta; }
     public Boolean getCozinha() { return cozinha; }
     public void setCozinha(Boolean cozinha) { this.cozinha = cozinha; }
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
 }

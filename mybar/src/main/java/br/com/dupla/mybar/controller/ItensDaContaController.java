@@ -28,4 +28,10 @@ public class ItensDaContaController {
     public List<ItensDaContaResponse> listarPorConta(@PathVariable Long contaId) {
         return itensDaContaService.listarPorConta(contaId);
     }
+
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<Void> cancelarItem(@PathVariable Long id, @RequestBody br.com.dupla.mybar.dto.conta.CancelamentoRequest request) {
+        itensDaContaService.cancelarItem(id, request);
+        return ResponseEntity.noContent().build();
+    }
 }

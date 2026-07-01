@@ -21,8 +21,8 @@ public class TipoItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TipoItemResponse>> listarTodos() {
-        return ResponseEntity.ok(tipoItemService.listarTodos());
+    public ResponseEntity<List<TipoItemResponse>> listar() {
+        return ResponseEntity.ok(tipoItemService.listarAtivos());
     }
 
     @GetMapping("/{codigo}")
@@ -41,8 +41,8 @@ public class TipoItemController {
     }
 
     @DeleteMapping("/{codigo}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
-        tipoItemService.deletar(codigo);
+    public ResponseEntity<Void> remover(@PathVariable Integer codigo) {
+        tipoItemService.excluirOuDesativar(codigo);
         return ResponseEntity.noContent().build();
     }
 }

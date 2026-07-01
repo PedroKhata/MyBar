@@ -36,8 +36,14 @@ public class ContaService {
     }
 
     public ContaResponse abrirConta(ContaAberturaRequest request) {
-        Cliente cliente = clienteRepository.findById(request.clienteId())
-                .orElseThrow(() -> new RegraNegocioException("Cliente não encontrado."));
+        Cliente cliente = clienteRepository.findByCpf(request.cpf()).orElseGet(() -> {
+            Cliente novoCliente = new Cliente();
+            novoCliente.setCpf(request.cpf());
+            novoCliente.setNome(request.nome());
+            novoCliente.setCelular(request.celular());
+            novoCliente.setSexo(request.sexo());
+            return clienteRepository.save(novoCliente);
+        });
 
         Integer proximoNumero = contaRepository.findMaxNumero() + 1;
 
@@ -66,11 +72,9 @@ public class ContaService {
             throw new RegraNegocioException("Esta conta já está fechada.");
         }
 
-        // 1. Buscar a Configuração do dia em que a conta foi aberta para o valor do ingresso
         Configuracao config = configuracaoRepository.findTopByDataOrderByHoraDesc(conta.getDataAbertura())
                 .orElseThrow(() -> new RegraNegocioException("Não há configuração do bar registrada para o dia desta conta."));
 
-        // 2. Definir valor do ingresso baseado no sexo do cliente
         BigDecimal valorIngresso = BigDecimal.ZERO;
         String sexoCliente = conta.getCliente().getSexo();
         if ("Masculino".equalsIgnoreCase(sexoCliente)) {
@@ -79,7 +83,6 @@ public class ContaService {
             valorIngresso = config.getValorIngressoFemin();
         }
 
-        // 3. Somar consumo e calcular gorjetas por tipo de item
         BigDecimal totalConsumo = BigDecimal.ZERO;
         BigDecimal totalGorjeta = BigDecimal.ZERO;
         List<ItensDaConta> itens = itensDaContaRepository.findByContaIdAndAtivoTrue(contaId);
@@ -96,7 +99,6 @@ public class ContaService {
             totalGorjeta = totalGorjeta.add(valorGorjeta);
         }
 
-        // 4. Somar Pagamentos
         List<Pagamento> pagamentos = pagamentoRepository.findByContaIdAndAtivoTrue(contaId);
         BigDecimal totalPago = pagamentos.stream()
                 .map(Pagamento::getValor)
@@ -110,6 +112,22 @@ public class ContaService {
         }
 
         BigDecimal troco = totalPago.subtract(totalAPagar);
+
+        if (troco.compareTo(BigDecimal.ZERO) > 0) {
+            Pagamento pagamentoTroco = new Pagamento();
+            pagamentoTroco.setConta(conta);
+            pagamentoTroco.setForma("DINHEIRO");
+            pagamentoTroco.setValor(troco.negate());
+
+            // O sistema procura o funcionário que registrou o último pagamento para lhe atribuir o troco
+            if (!pagamentos.isEmpty()) {
+                Usuario caixa = pagamentos.get(pagamentos.size() - 1).getQuemLancouPg();
+                pagamentoTroco.setQuemLancouPg(caixa);
+            }
+
+            pagamentoTroco.setAtivo(true);
+            pagamentoRepository.save(pagamentoTroco);
+        }
 
         conta.setStatus("FECHADA");
         contaRepository.save(conta);

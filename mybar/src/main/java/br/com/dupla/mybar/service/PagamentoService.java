@@ -40,6 +40,10 @@ public class PagamentoService {
         Usuario quemLancou = usuarioRepository.findById(request.quemLancouCodigo())
                 .orElseThrow(() -> new RegraNegocioException("Usuário lançador não encontrado."));
 
+        if (!quemLancou.getSenha().equals(request.senhaCaixa())) {
+            throw new RegraNegocioException("Senha incorreta. Pagamento não autorizado.");
+        }
+
         Pagamento pagamento = new Pagamento();
         pagamento.setConta(conta);
         pagamento.setQuemLancouPg(quemLancou);

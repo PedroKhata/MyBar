@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class ItemCardapio {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "codigo")
     private Integer codigo;
 
     @Column(nullable = false)
@@ -21,6 +21,9 @@ public class ItemCardapio {
     @JoinColumn(name = "tipo_item_codigo", nullable = false)
     private TipoItem tipo;
 
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+
     public ItemCardapio() {}
 
     // Getters e Setters
@@ -32,4 +35,11 @@ public class ItemCardapio {
     public void setValor(BigDecimal valor) { this.valor = valor; }
     public TipoItem getTipo() { return tipo; }
     public void setTipo(TipoItem tipo) { this.tipo = tipo; }
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
 }

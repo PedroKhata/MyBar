@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record UsuarioRequest(
+        @NotNull(message = "O código numérico do utilizador é obrigatório.")
+        Integer codigo,
+
         @NotBlank(message = "O nome é obrigatório.")
         String nome,
 
@@ -16,6 +19,6 @@ public record UsuarioRequest(
         @NotBlank(message = "A senha é obrigatória.")
         String senha,
 
-        @NotNull(message = "O tipo de usuário é obrigatório.")
+        @NotNull(message = "O tipo de utilizador é obrigatório.")
         TipoUsuario tipo
 ) {}

@@ -12,78 +12,93 @@ async function apiFetch(path, options = {}) {
 
     try {
         const response = await fetch(url, config);
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
-            throw new Error(error.message || `Erro ${response.status}`);
-        }
+
+        // Se for 204 (No Content - Exclusão), não tenta converter para JSON
         if (response.status === 204) return null;
-        return await response.json();
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const errorMessage = data.message || `Erro ${response.status}`;
+            throw new Error(errorMessage);
+        }
+
+        return data;
     } catch (err) {
+        // Log interno para ajudar no debug do console do navegador
+        console.error(`[API Error] ${options.method || 'GET'} ${path}:`, err.message);
         throw err;
     }
 }
 
-// TipoItem
 const TipoItemAPI = {
     listar: () => apiFetch('/api/tipos-item'),
-    buscar: (id) => apiFetch(`/api/tipos-item/${id}`),
+    buscar: (codigo) => apiFetch(`/api/tipos-item/${codigo}`),
     salvar: (data) => apiFetch('/api/tipos-item', { method: 'POST', body: JSON.stringify(data) }),
-    atualizar: (id, data) => apiFetch(`/api/tipos-item/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deletar: (id) => apiFetch(`/api/tipos-item/${id}`, { method: 'DELETE' }),
+    atualizar: (codigo, data) => apiFetch(`/api/tipos-item/${codigo}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deletar: (codigo) => apiFetch(`/api/tipos-item/${codigo}`, { method: 'DELETE' })
 };
 
-// ItemCardapio
 const ItemCardapioAPI = {
     listar: () => apiFetch('/api/itens-cardapio'),
-    buscar: (id) => apiFetch(`/api/itens-cardapio/${id}`),
+    buscar: (codigo) => apiFetch(`/api/itens-cardapio/${codigo}`),
     salvar: (data) => apiFetch('/api/itens-cardapio', { method: 'POST', body: JSON.stringify(data) }),
-    atualizar: (id, data) => apiFetch(`/api/itens-cardapio/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deletar: (id) => apiFetch(`/api/itens-cardapio/${id}`, { method: 'DELETE' }),
+    atualizar: (codigo, data) => apiFetch(`/api/itens-cardapio/${codigo}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deletar: (codigo) => apiFetch(`/api/itens-cardapio/${codigo}`, { method: 'DELETE' })
 };
 
-// Configuracao
 const ConfiguracaoAPI = {
-    listar: () => apiFetch('/api/configuracoes'),
+    listarTodas: () => apiFetch('/api/configuracoes'),
     buscarHoje: () => apiFetch('/api/configuracoes/hoje'),
-    salvar: (data) => apiFetch('/api/configuracoes', { method: 'POST', body: JSON.stringify(data) }),
+    salvar: (data) => apiFetch('/api/configuracoes', { method: 'POST', body: JSON.stringify(data) })
 };
 
-// Usuario
 const UsuarioAPI = {
     listar: () => apiFetch('/api/usuarios'),
-    buscar: (id) => apiFetch(`/api/usuarios/${id}`),
+    buscar: (codigo) => apiFetch(`/api/usuarios/${codigo}`),
     salvar: (data) => apiFetch('/api/usuarios', { method: 'POST', body: JSON.stringify(data) }),
-    atualizar: (id, data) => apiFetch(`/api/usuarios/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deletar: (id) => apiFetch(`/api/usuarios/${id}`, { method: 'DELETE' }),
+    atualizar: (codigo, data) => apiFetch(`/api/usuarios/${codigo}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deletar: (codigo) => apiFetch(`/api/usuarios/${codigo}`, { method: 'DELETE' })
 };
 
-// Cozinha
+const ClienteAPI = {
+    listar: () => apiFetch('/api/clientes'),
+    cadastrar: (data) => apiFetch('/api/clientes', { method: 'POST', body: JSON.stringify(data) }),
+    deletar: (id) => apiFetch(`/api/clientes/${id}`, { method: 'DELETE' })
+};
+
+const ContaAPI = {
+    listarAbertas: () => apiFetch('/api/contas/abertas'),
+    abrir: (data) => apiFetch('/api/contas', { method: 'POST', body: JSON.stringify(data) }),
+    fechar: (id) => apiFetch(`/api/contas/${id}/fechar`, { method: 'PATCH' })
+};
+
+const ItensDaContaAPI = {
+    listarPorConta: (contaId) => apiFetch(`/api/itens-da-conta/conta/${contaId}`),
+    lancar: (data) => apiFetch('/api/itens-da-conta', { method: 'POST', body: JSON.stringify(data) }),
+    cancelarItem: (id, data) => apiFetch(`/api/itens-da-conta/${id}/cancelar`, { method: 'PATCH', body: JSON.stringify(data) })
+};
+
+const PagamentoAPI = {
+    listarPorConta: (contaId) => apiFetch(`/api/pagamentos/conta/${contaId}`),
+    lancar: (data) => apiFetch('/api/pagamentos', { method: 'POST', body: JSON.stringify(data) }),
+    cancelar: (id, data) => apiFetch(`/api/pagamentos/${id}/cancelar`, { method: 'PATCH', body: JSON.stringify(data) })
+};
+
+const RelatorioAPI = {
+    faturamento: (inicio, fim) => apiFetch(`/api/relatorios/faturamento?inicio=${inicio}&fim=${fim}`)
+};
+
 const CozinhaAPI = {
     listarSolicitados: () => apiFetch('/api/cozinha/solicitados'),
     listarEmPreparo: () => apiFetch('/api/cozinha/em-preparo'),
     receber: (id) => apiFetch(`/api/cozinha/${id}/receber`, { method: 'PATCH' }),
-    entregar: (id) => apiFetch(`/api/cozinha/${id}/entregar`, { method: 'PATCH' }),
+    entregar: (id) => apiFetch(`/api/cozinha/${id}/entregar`, { method: 'PATCH' })
 };
 
-// Entregas
 const EntregaAPI = {
     listarProntos: () => apiFetch('/api/entregas/prontos'),
     listarEmEntrega: () => apiFetch('/api/entregas/em-entrega'),
     receber: (id) => apiFetch(`/api/entregas/${id}/receber`, { method: 'PATCH' }),
-    entregar: (id) => apiFetch(`/api/entregas/${id}/entregar`, { method: 'PATCH' }),
-};
-
-// Contas
-const ContaAPI = {
-    listar: () => apiFetch('/api/contas'),
-    buscar: (id) => apiFetch(`/api/contas/${id}`),
-    salvar: (data) => apiFetch('/api/contas', { method: 'POST', body: JSON.stringify(data) }),
-    atualizar: (id, data) => apiFetch(`/api/contas/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deletar: (id) => apiFetch(`/api/contas/${id}`, { method: 'DELETE' }),
-};
-
-// ItensDaConta
-const ItensDaContaAPI = {
-    listarPorConta: (contaId) => apiFetch(`/api/itens-da-conta/conta/${contaId}`),
-    lancar: (data) => apiFetch('/api/itens-da-conta', { method: 'POST', body: JSON.stringify(data) }),
+    entregar: (id) => apiFetch(`/api/entregas/${id}/entregar`, { method: 'PATCH' })
 };

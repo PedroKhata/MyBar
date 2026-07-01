@@ -43,6 +43,7 @@ public class TipoItemService {
         tipo.setDescricao(request.descricao());
         tipo.setGorjeta(request.gorjeta());
         tipo.setCozinha(request.cozinha());
+        tipo.setAtivo(true);
 
         return new TipoItemResponse(tipoItemRepository.save(tipo));
     }
@@ -65,6 +66,26 @@ public class TipoItemService {
             tipoItemRepository.delete(tipo);
         } catch (DataIntegrityViolationException e) {
             throw new RegraNegocioException("Não é possível excluir: este tipo possui itens vinculados.");
+        }
+    }
+
+    public List<TipoItemResponse> listarAtivos() {
+        return tipoItemRepository.findByAtivoTrue().stream()
+                .map(TipoItemResponse::new)
+                .toList();
+    }
+
+    public void excluirOuDesativar(Integer codigo) {
+        TipoItem tipoItem = tipoItemRepository.findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("Tipo de item não encontrado."));
+
+        try {
+            tipoItemRepository.delete(tipoItem);
+            tipoItemRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+
+            tipoItem.setAtivo(false);
+            tipoItemRepository.save(tipoItem);
         }
     }
 }
